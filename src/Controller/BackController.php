@@ -8,14 +8,20 @@
 
 namespace Controller;
 
-class BackController
+use Lib\Collection;
+use Lib\Controller;
+use Model\Database;
+use Model\Article;
+use Model\Commentaire;
+
+class BackController extends Controller
 {
     /**
      *
      */
     public function Posts()
     {
-        echo "Posts ";
+        $this->render('admin.html.twig', array());
     }
 
     /**
@@ -23,15 +29,18 @@ class BackController
      */
     public function Post($id)
     {
-        echo "Post ". $id;
+        $database = new Database();
+        $article= $database->find(Article::class, $id);
+        $article->getCommentaire();
+        $this->render('adminArticle.html.twig', ["article"=>$article]);
     }
 
     /**
      *
      */
-    public function NewPost()
+    public function NewPost($id)
     {
-        echo "NewPost ";
+
     }
 
     /**

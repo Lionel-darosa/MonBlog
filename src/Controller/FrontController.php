@@ -8,10 +8,14 @@
 
 namespace Controller;
 
+
+use Lib\Collection;
 use Lib\Controller;
 use Model\Database;
 use Model\Article;
 use Model\Commentaire;
+
+
 
 class FrontController extends Controller
 {
@@ -30,12 +34,9 @@ class FrontController extends Controller
     public function Post($id)
     {
         $database = new Database();
-        $database->findall(Article::class, [$id]);
-        print_r($database);
-
-
-
-        $this->render('article.html.twig',[$database]);
+        $article= $database->find(Article::class, $id);
+        $article->getCommentaire();
+        $this->render('article.html.twig', ["article"=>$article]);
     }
 
     /**
@@ -44,6 +45,11 @@ class FrontController extends Controller
     public function About()
     {
         $this->render('about.html.twig', array());
+    }
+
+    public function Contact()
+    {
+        $this->render('contact.html.twig', array());
     }
 
     /**
