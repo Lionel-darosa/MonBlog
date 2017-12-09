@@ -38,17 +38,28 @@ class BackController extends Controller
     /**
      *
      */
-    public function NewPost($id)
+    public function NewPost()
     {
-
+        $this->render('NewPost.html.twig', array());
     }
 
     /**
      * @param $id
      */
-    public function UpdatePost($id)
+    public function UpdatePost()
     {
-        echo "UpdatePost ". $id;
+        $database = new Database();
+
+        $newArticle = new Article($database);
+
+        $newArticle->setTitre($_POST['titre']);
+        $newArticle->setAuteur($_POST['auteur']);
+        $newArticle->setArticle($_POST['article']);
+        $newArticle->setOrdre($_POST['ordre']);
+
+        $database->insert($newArticle);
+
+        $this->render('admin.html.twig', array());
     }
 
     /**
@@ -56,7 +67,10 @@ class BackController extends Controller
      */
     public function DeletePost($id)
     {
-        echo "DeletePost ".$id;
+        $database = new Database();
+        $article= $database->find(Article::class, $id);
+        $database->delete($article);
+        $this->render('admin.html.twig', array());
     }
 
     /**

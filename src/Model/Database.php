@@ -38,8 +38,6 @@ class Database
         }, array_keys($criteria), $criteria))))->fetchAll(\PDO::FETCH_CLASS, $class, ["database" => &$this]);
     }
 
-
-
     public function delete($object)
     {
         $this->pdo->exec(sprintf("DELETE  FROM %s WHERE id=%s", $object::getTable(), $object->getId()));
