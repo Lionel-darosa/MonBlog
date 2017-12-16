@@ -33,8 +33,7 @@ class FrontController extends Controller
      */
     public function Post($id)
     {
-        $database = new Database();
-        $article= $database->find(Article::class, $id);
+        $article= $this->getDatabase()->find(Article::class, $id);
         $article->getCommentaire();
         $this->render('article.html.twig', ["article"=>$article]);
     }

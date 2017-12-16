@@ -29,6 +29,8 @@ $router->add(New Route('LogIn',  '#^/LogIn$#', 'Controller\FrontController', 'Lo
 $router->add(New Route('BackPosts',  '#^/admin/articles$#', 'Controller\BackController', 'Posts'));
 $router->add(New Route('BackPost',  '#^/admin/article/([0-9]+)$#', 'Controller\BackController', 'Post'));
 $router->add(New Route('NewPost',  '#^/admin/NewArticle$#', 'Controller\BackController', 'NewPost'));
+$router->add(New Route('InsertPost',  '#^/admin/InsertArticle$#', 'Controller\BackController', 'InsertPost'));
+$router->add(New Route('NewUpdatePost',  '#^/admin/NewUpdateArticle/([0-9]+)$#', 'Controller\BackController', 'NewUpdatePost'));
 $router->add(New Route('UpdatePost',  '#^/admin/UpdateArticle/([0-9]+)$#', 'Controller\BackController', 'UpdatePost'));
 $router->add(New Route('DeletePost',  '#^/admin/DeleteArticle/([0-9]+)$#', 'Controller\BackController', 'DeletePost'));
 $router->add(New Route('DeleteComment',  '#^/admin/DeleteComment/([0-9]+)$#', 'Controller\BackController', 'DeleteComment'));

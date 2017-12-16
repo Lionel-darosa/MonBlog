@@ -29,8 +29,7 @@ class BackController extends Controller
      */
     public function Post($id)
     {
-        $database = new Database();
-        $article= $database->find(Article::class, $id);
+        $article= $this->getDatabase()->find(Article::class, $id);
         $article->getCommentaire();
         $this->render('adminArticle.html.twig', ["article"=>$article]);
     }
@@ -44,21 +43,44 @@ class BackController extends Controller
     }
 
     /**
-     * @param $id
+     *
      */
-    public function UpdatePost()
+    public function InsertPost()
     {
-        $database = new Database();
 
-        $newArticle = new Article($database);
+        $newArticle = new Article($this->getDatabase());
 
         $newArticle->setTitre($_POST['titre']);
         $newArticle->setAuteur($_POST['auteur']);
         $newArticle->setArticle($_POST['article']);
         $newArticle->setOrdre($_POST['ordre']);
 
-        $database->insert($newArticle);
+        $this->getDatabase()->insert($newArticle);
+        $this->render('admin.html.twig', array());
+    }
 
+    /**
+     * @param $id
+     */
+    public function NewUpdatePost($id)
+    {
+        $article= $this->getDatabase()->find(Article::class, $id);
+        $this->render('updatePost.html.twig', ["article"=>$article]);
+    }
+
+    /**
+     * @param $id
+     */
+    public function UpdatePost($id)
+    {
+        $article = $this->getDatabase()->find(Article::class, $id );
+
+        $article->setTitre($_POST['titre']);
+        $article->setAuteur($_POST['auteur']);
+        $article->setArticle($_POST['article']);
+        $article->setOrdre($_POST['ordre']);
+
+        $this->getDatabase()->update($article);
         $this->render('admin.html.twig', array());
     }
 
@@ -67,8 +89,7 @@ class BackController extends Controller
      */
     public function DeletePost($id)
     {
-        $database = new Database();
-        $article= $database->find(Article::class, $id);
+        $article= $this->getDatabase()->find(Article::class, $id);
         $database->delete($article);
         $this->render('admin.html.twig', array());
     }

@@ -71,32 +71,32 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
-                <form name="newPost" method="post" action="/admin/InsertArticle">
+                <form name="newPost" method="post" action="/admin/UpdateArticle/{{ article.id }}">
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label for="titre">Titre:</label>
-                            <input type="text" name="titre" class="form-control" placeholder="Titre"  >
+                            <input type="text" name="titre" class="form-control" placeholder="Titre" value="{{ article.titre }}" >
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label for="ordre">N° d'article:</label>
-                            <input type="text" name="ordre" class="form-control" placeholder="N° d'article" " >
+                            <input type="text" name="ordre" class="form-control" placeholder="N° d'article" value="{{ article.ordre }}" >
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label for="auteur">Auteur:</label>
-                            <input type="text" name="auteur" class="form-control" placeholder="Auteur" " >
+                            <input type="text" name="auteur" class="form-control" placeholder="Auteur" value="{{ article.auteur }}" >
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label for="article">Article:</label>
-                            <textarea rows="10" name="article" placeholder="article">Entrez votre texte</textarea>
+                            <textarea rows="10" name="article" placeholder="article">{{ article.article|raw }}</textarea>
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
