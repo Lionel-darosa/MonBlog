@@ -38,6 +38,13 @@ class Database
         }, array_keys($criteria), $criteria))))->fetchAll(\PDO::FETCH_CLASS, $class, ["database" => &$this]);
     }
 
+    public function findPerPage($class, $first, $nbr)
+    {
+        $statement= $this->pdo->query(sprintf('SELECT * FROM %s ORDER BY ordre DESC LIMIT '.$first.','.$nbr.'', $class::getTable()));
+        return $statement->fetchAll();
+
+    }
+
     public function delete($object)
     {
         $this->pdo->exec(sprintf("DELETE  FROM %s WHERE id=%s", $object::getTable(), $object->getId()));
@@ -65,5 +72,12 @@ class Database
         }
 
         $this->pdo->exec(sprintf("INSERT INTO %s SET %s", $object::getTable(), implode(",", $columns)));
+    }
+
+    public function count($class)
+    {
+        $req=$this->pdo->query(sprintf("SELECT COUNT(*) AS content FROM %s", $class::getTable()));
+        $total= $req->fetch();
+        return $total['content'];
     }
 }

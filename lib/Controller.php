@@ -40,4 +40,7 @@ abstract class Controller
         echo $template->render($data);
     }
 
+    public function page()
+    {}
+
 }

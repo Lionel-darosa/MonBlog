@@ -19,9 +19,14 @@ class BackController extends Controller
     /**
      *
      */
-    public function Posts()
+    public function Posts($page)
     {
-        $this->render('admin.html.twig', array());
+        $nbrPerPage=5;
+        $nbrArticles=$this->getDatabase()->count(Article::class);
+        $nbrPages= ceil($nbrArticles / $nbrPerPage);
+        $firstEnter=($page-1)*$nbrPerPage;
+        $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
+        $this->render('admin.html.twig', ["postsOnPage"=>$postsOnPage]);
     }
 
     /**
@@ -47,14 +52,11 @@ class BackController extends Controller
      */
     public function InsertPost()
     {
-
         $newArticle = new Article($this->getDatabase());
-
         $newArticle->setTitre($_POST['titre']);
         $newArticle->setAuteur($_POST['auteur']);
         $newArticle->setArticle($_POST['article']);
         $newArticle->setOrdre($_POST['ordre']);
-
         $this->getDatabase()->insert($newArticle);
         $this->render('admin.html.twig', array());
     }
@@ -74,14 +76,12 @@ class BackController extends Controller
     public function UpdatePost($id)
     {
         $article = $this->getDatabase()->find(Article::class, $id );
-
         $article->setTitre($_POST['titre']);
         $article->setAuteur($_POST['auteur']);
         $article->setArticle($_POST['article']);
         $article->setOrdre($_POST['ordre']);
-
         $this->getDatabase()->update($article);
-        $this->render('admin.html.twig', array());
+        $this->Posts(1);
     }
 
     /**
@@ -89,7 +89,8 @@ class BackController extends Controller
      */
     public function DeletePost($id)
     {
-        $article= $this->getDatabase()->find(Article::class, $id);
+        $database= new Database();
+        $article= $database->find(Article::class, $id);
         $database->delete($article);
         $this->render('admin.html.twig', array());
     }

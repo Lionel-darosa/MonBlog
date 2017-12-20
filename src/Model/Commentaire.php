@@ -11,11 +11,12 @@ namespace Model;
 class Commentaire extends Entity
 {
     public $fields = [
-        "id",
-        "pseudo",
-        "commentaire",
-        "article_id",
-        "signale"
+        "id"=>"pk",
+        "pseudo"=>"",
+        "commentaire"=>"",
+        "article_id"=>"",
+        "signale"=>"",
+        "date_Comment"=>"default"
 
     ];
 
@@ -44,6 +45,10 @@ class Commentaire extends Entity
      */
     private $signale;
 
+    private $date_Comment;
+
+    private $article;
+
     /**
      * @return bool
      */
@@ -60,10 +65,6 @@ class Commentaire extends Entity
         $this->signale = $signale;
     }
 
-    /**
-     * @var Chapter
-     */
-    private $article;
 
     public static function getTable()
     {
@@ -111,5 +112,20 @@ class Commentaire extends Entity
     public function setCommentaire($commentaire)
     {
         $this->commentaire = $commentaire;
+    }
+
+    public function getDate_Comment()
+    {
+        return \DateTime::createFromFormat("Y-m-d H:i:s", $this->date_Comment);
+    }
+
+    public function setDate_Comment($date_Comment)
+    {
+        $this->date_Comment = $date_Comment->format("Y-m-d H:i:s");
+    }
+
+    public function __get($name)
+    {
+        return $this->$name;
     }
 }

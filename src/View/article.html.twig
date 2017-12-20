@@ -2,87 +2,102 @@
 
 
 {% block header %}
-<!-- Page Header -->
-<header class="masthead" style="background-image: url('/bootstrap/img/alaska.jpg')">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                <div class="post-heading">
-                    <h1> {{ article.titre }} </h1>
-                    <span class="meta">Posted by
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('/bootstrap/img/alaska.jpg')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="post-heading">
+                        <h1> {{ article.titre }} </h1>
+                        <span class="meta">Posted by
             <a href="#">{{ article.auteur }}</a>
             , {{ article.date_article|date('j F Y') }}</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 {% endblock %}
 
 {% block section %}
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                {{ article.article|raw }}
+    <!-- Post Content -->
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    {{ article.article|raw }}
+                </div>
             </div>
         </div>
-    </div>
-</article>
+    </article>
 
-<!-- Comments Form -->
-<div class="col-lg-6 mx-auto">
-    <h5 class="card-header">Laissez un commentaire:</h5>
-    <div class="card-body">
-        <form>
-            <div class="form-group">
-                <textarea class="form-control" rows="3"></textarea>
+    <!-- Comments Form -->
+    <div class="col-lg-6 mx-auto">
+        <h5 class="card-header">Laissez un commentaire:</h5>
+        <div class="card-body">
+            <form name="newComment" method="post" action="/article/AddComment/{{ article.id }}">
+                <div class="form-group">
+                    <input type="text" name="pseudo" class="form-control" placeholder="pseudo"  >
+                    <textarea class="form-control" name="commentaire" placeholder="commentaire" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Single Comment -->
+    {% for article in article%}
+        <article>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <h5 class="mt-0">{{ commentaire.pseudo }}</h5>
+                        {{ commentaire.commentaire }}
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
-</div>
+        </article>
 
-<hr>
+    {% endfor %}
+    <hr>
 {% endblock %}
 
 {% block footer %}
-<!-- Footer -->
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                <ul class="list-inline text-center">
-                    <li class="list-inline-item">
-                        <a href="#">
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="#">
               <span class="fa-stack fa-lg">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
               </span>
-                        </a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="#">
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#">
               <span class="fa-stack fa-lg">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
               </span>
-                        </a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="#">
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#">
               <span class="fa-stack fa-lg">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-github fa-stack-1x fa-inverse"></i>
               </span>
-                        </a>
-                    </li>
-                </ul>
-                <p class="copyright text-muted">Copyright &copy; Your Website 2017</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Copyright &copy; Your Website 2017</p>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 {% endblock %}

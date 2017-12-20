@@ -24,7 +24,18 @@ class FrontController extends Controller
      */
     public function Accueil()
     {
-        $this->render('index.html.twig', array());
+        $postsOnPage= $this->getDatabase()->findPerPage(Article::class, 0, 5);
+        $this->render('index.html.twig', ["postsOnPage"=>$postsOnPage]);
+    }
+
+    public function Posts($page)
+    {
+        $nbrPerPage=5;
+        $nbrArticles=$this->getDatabase()->count(Article::class);
+        $nbrPages= ceil($nbrArticles / $nbrPerPage);
+        $firstEnter=($page-1)*$nbrPerPage;
+        $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
+        $this->render('articles.html.twig', ["postsOnPage"=>$postsOnPage]);
     }
 
 
@@ -56,7 +67,12 @@ class FrontController extends Controller
      */
     public function AddComment($id)
     {
-
+        $database= new Database();
+        $newComment = new Commentaire($database);
+        $newComment->setPseudo($_POST['pseudo']);
+        $newComment->setCommentaire($_POST['commentaire']);
+        $newComment->setArticleId($id);
+        $this->getDatabase()->insert($newComment);
     }
 
     /**
