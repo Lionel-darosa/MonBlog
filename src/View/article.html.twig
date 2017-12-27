@@ -47,20 +47,17 @@
     </div>
 
     <!-- Single Comment -->
-    {% for article in article%}
-        <article>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-md-10 mx-auto">
-                        <h5 class="mt-0">{{ commentaire.pseudo }}</h5>
-                        {{ commentaire.commentaire }}
-                    </div>
+    <div class="col-sm-8 mx-auto">
+        {% for commentaire in comments%}
+            <article>
+                <div class="post-preview">
+                    <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_comment|date('j F Y') }}</h5>
+                    <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/article/SignalComment/{{ commentaire.id }}">signaler</a></p>
                 </div>
-            </div>
-        </article>
-
-    {% endfor %}
-    <hr>
+            </article>
+            <hr>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block footer %}

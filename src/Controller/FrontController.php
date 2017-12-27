@@ -45,8 +45,8 @@ class FrontController extends Controller
     public function Post($id)
     {
         $article= $this->getDatabase()->find(Article::class, $id);
-        $article->getCommentaire();
-        $this->render('article.html.twig', ["article"=>$article]);
+        $comments= $this->getDatabase()->findall(Commentaire::class, ['article_id'=>$id]);
+        $this->render('article.html.twig', ["article"=>$article, "comments"=>$comments]);
     }
 
     /**
@@ -72,7 +72,17 @@ class FrontController extends Controller
         $newComment->setPseudo($_POST['pseudo']);
         $newComment->setCommentaire($_POST['commentaire']);
         $newComment->setArticleId($id);
+        $newComment->setSignale('0');
         $this->getDatabase()->insert($newComment);
+        $this->redirect('/article/'.$id);
+    }
+
+    public function Signal($id)
+    {
+        $comment= $this->getDatabase()->find(Commentaire::class, $id);
+        $comment->setSignale('1');
+        $this->getDatabase()->update($comment);
+        $this->redirect('/article/'.$comment->getArticleId());
     }
 
     /**

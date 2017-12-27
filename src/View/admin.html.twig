@@ -43,43 +43,37 @@
 
 {% block section %}
     <!-- Main Content -->
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                <div class="clearfix">
-                    <a class="btn btn-primary float-left" href="/admin/NewArticle">Nouvel Article </a>
-                </div>
-                {% for article in postsOnPage %}
-                    <div class="post-preview">
-                        <a href="/admin/article/{{ article.id }}">
-                            <h2 class="post-title">
-                                {{ article.titre }}
-                            </h2>
 
-                        </a>
-                        <p class="post-meta">Posted by
-                            <a href="#">{{ article.auteur }}</a>
-                            {{ article.date_article|date('j F Y') }}</p>
-                    </div>
-                    <hr>
+    <section class="col-sm-12 table-responsive">
+        <table class="table table-bordered table-striped ">
+            <h2>Articles</h2>
+            <thead>
+                <tr>
+                    <th>n°</th>
+                    <th>Titre</th>
+                    <th>Début de l'article</th>
+                    <th>Auteur</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                    <tr>
+                        <td>{{ article.ordre }}</td>
+                        <td>{{ article.titre }}</td>
+                        <td>{% set rawcontent= article.article %}
+                            {{ rawcontent | striptags | slice(0, 100) }} ...</td>
+                        <td>{{ article.auteur }}</td>
+                        <td>{{ article.date_article|date('j F Y') }}</td>
+                        <td class="alert-success"><a href="/admin/article/{{ article.id }}">Afficher</a></td>
+                    </tr>
                 {% endfor %}
-
-
-
-                <!-- Pager -->
-                <div class="clearfix">
-
-                    <a class="btn btn-primary float-left" href="/articles?page=">&larr; Suivants </a>
-
-
-                    <a class="btn btn-primary float-right" href="/articles?page=">Précédents &rarr;</a>
-
-                </div>
-            </div>
+            </tbody>
+        </table>
+        <div class="clearfix">
+            <a class="btn btn-primary float-left" href="/admin/NewArticle">Nouvel Article </a>
         </div>
-    </div>
-
-    <hr>
+    </section>
 {% endblock %}
 
 {% block footer %}

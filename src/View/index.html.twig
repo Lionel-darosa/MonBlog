@@ -33,7 +33,13 @@
                         </a>
                         <p class="post-meta">Posted by
                             <a href="#">{{ article.auteur }}</a>
-                            {{ article.date_article|date('j F Y') }}</p>
+                            {{ article.date_article|date('j F Y') }}
+                        </p>
+                        <p class="post-subtitle">
+                            {% set rawcontent= article.article %}
+                            {{ rawcontent | striptags | slice(0, 200) }} ...
+
+                        </p>
                     </div>
                     <hr>
                 {% endfor %}

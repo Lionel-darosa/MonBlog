@@ -70,7 +70,6 @@ class Database
                 $columns[] = $field . " = " . "'" . str_replace("'", "''", $object->__get($field)) . "'";
             }
         }
-
         $this->pdo->exec(sprintf("INSERT INTO %s SET %s", $object::getTable(), implode(",", $columns)));
     }
 

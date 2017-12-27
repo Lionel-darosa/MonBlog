@@ -40,7 +40,9 @@ abstract class Controller
         echo $template->render($data);
     }
 
-    public function page()
-    {}
+    public function redirect($page)
+    {
+        header('Location: http://monblog.test'.$page);
+    }
 
 }
