@@ -4,7 +4,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
         <div class="container">
-            <a class="navbar-brand" href="/admin/articles?page=1">Accueil administration</a>
+            <a class="navbar-brand" href="/admin/articles">Accueil administration</a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
                 <i class="fa fa-bars"></i>
@@ -13,7 +13,7 @@
                 <ul class="navbar-nav ml-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/articles?page=1">Articles</a>
+                        <a class="nav-link" href="/admin/articles">Articles</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/">retour sur site</a>
@@ -63,6 +63,40 @@
     </article>
 
     <hr>
+
+    <!--Comments Reported-->
+    <div class="col-sm-6 mx-auto">
+        <h2>Commentaires signalés</h2>
+    </div>
+    <div class="col-sm-6 mx-auto alert-danger">
+        {% for commentaire in reportComment%}
+            <article>
+                <div class="post-preview">
+                    <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_comment|date('j F Y') }}</h5>
+                    <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/admin/DeleteComment/{{ commentaire.id }}">supprimer le commentaire</a></p>
+                </div>
+            </article>
+            <hr>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <!--Other Comments -->
+    <div class="col-sm-6 mx-auto">
+        <h2>Autres commentaires</h2>
+    </div>
+    <div class="col-sm-8 mx-auto">
+        {% for commentaire in article.getCommentaire()%}
+            <article>
+                <div class="post-preview">
+                    <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_comment|date('j F Y') }}</h5>
+                    <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/admin/DeleteComment/{{ commentaire.id }}">supprimer le commentaire</a></p>
+                </div>
+            </article>
+            <hr>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block footer %}

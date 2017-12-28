@@ -45,8 +45,7 @@ class FrontController extends Controller
     public function Post($id)
     {
         $article= $this->getDatabase()->find(Article::class, $id);
-        $comments= $this->getDatabase()->findall(Commentaire::class, ['article_id'=>$id]);
-        $this->render('article.html.twig', ["article"=>$article, "comments"=>$comments]);
+        $this->render('article.html.twig', ["article"=>$article]);
     }
 
     /**

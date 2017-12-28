@@ -31,8 +31,8 @@ class BackController extends Controller
     public function Post($id)
     {
         $article= $this->getDatabase()->find(Article::class, $id);
-        $article->getCommentaire();
-        $this->render('adminArticle.html.twig', ["article"=>$article]);
+        $reportComment= $this->getDatabase()->findall(Commentaire::class, ["signale"=>'1']);
+        $this->render('adminArticle.html.twig', ["article"=>$article, "reportComment"=>$reportComment]);
     }
 
     /**
@@ -97,7 +97,10 @@ class BackController extends Controller
      */
     public function DeleteComment($id)
     {
-        echo "DeleteComment ".$id;
+        $database= new Database();
+        $comment= $database->find(Commentaire::class, $id);
+        $database->delete($comment);
+        $this->redirect('/admin/article/'.$comment->getArticleId());
     }
 
 }

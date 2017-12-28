@@ -48,7 +48,7 @@
 
     <!-- Single Comment -->
     <div class="col-sm-8 mx-auto">
-        {% for commentaire in comments%}
+        {% for commentaire in article.getCommentaire()%}
             <article>
                 <div class="post-preview">
                     <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_comment|date('j F Y') }}</h5>
