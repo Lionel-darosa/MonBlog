@@ -21,6 +21,30 @@
 {% block section %}
     <!-- Main Content -->
     <div class="container">
+        <div class="row alert-dark">
+            <h2 class="mx-auto">Dernier Article</h2>
+            {% for article in lastPost %}
+                <div class="col-lg-11 col-md-10 mx-auto">
+                    <div class="post-preview">
+                        <a href="/article/{{ article.id }}">
+                            <h2 class="post-title">
+                                {{ article.titre }}
+                            </h2>
+
+                        </a>
+                        <p class="post-meta">Posté par
+                            {{ article.auteur }} {{ article.date_article|date('j F Y') }}
+                        </p>
+                        <p class="post-subtitle">
+                            {% set rawcontent= article.article %}
+                            {{ rawcontent | striptags | slice(0, 300) }} ...
+
+                        </p>
+                    </div>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 {% for article in postsOnPage %}
@@ -31,9 +55,7 @@
                             </h2>
 
                         </a>
-                        <p class="post-meta">Posted by
-                            <a href="#">{{ article.auteur }}</a>
-                            {{ article.date_article|date('j F Y') }}
+                        <p class="post-meta">Posté par {{ article.auteur }} le {{ article.date_article|date('j F Y') }}
                         </p>
                         <p class="post-subtitle">
                             {% set rawcontent= article.article %}

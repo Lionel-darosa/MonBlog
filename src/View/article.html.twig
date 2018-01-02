@@ -10,9 +10,7 @@
                 <div class="col-lg-8 col-md-10 mx-auto">
                     <div class="post-heading">
                         <h1> {{ article.titre }} </h1>
-                        <span class="meta">Posted by
-            <a href="#">{{ article.auteur }}</a>
-            , {{ article.date_article|date('j F Y') }}</span>
+                        <span class="meta">Posté par {{ article.auteur }}, {{ article.date_article|date('j F Y') }}</span>
                     </div>
                 </div>
             </div>

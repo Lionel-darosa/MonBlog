@@ -25,7 +25,8 @@ class FrontController extends Controller
     public function Accueil()
     {
         $postsOnPage= $this->getDatabase()->findPerPage(Article::class, 0, 5);
-        $this->render('index.html.twig', ["postsOnPage"=>$postsOnPage]);
+        $lastPost= $this->getDatabase()->findLast(Article::class);
+        $this->render('index.html.twig', ["postsOnPage"=>$postsOnPage, "lastPost"=>$lastPost]);
     }
 
     public function Posts($page)
@@ -35,7 +36,8 @@ class FrontController extends Controller
         $nbrPages= ceil($nbrArticles / $nbrPerPage);
         $firstEnter=($page-1)*$nbrPerPage;
         $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
-        $this->render('articles.html.twig', ["postsOnPage"=>$postsOnPage]);
+        $this->twig->addGlobal('_get', $_GET);
+        $this->render('articles.html.twig', ["postsOnPage"=>$postsOnPage, "nbrPages"=>$nbrPages]);
     }
 
 

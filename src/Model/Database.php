@@ -31,6 +31,12 @@ class Database
         return $statement->fetch();
     }
 
+    public function findLast($class)
+    {
+        $statement = $this->pdo->query(sprintf("SELECT * FROM %s ORDER BY id DESC LIMIT 1", $class::getTable()));
+        return $statement->fetchAll();
+    }
+
     public function findAll($class, $criteria = [])
     {
         return $this->pdo->query(sprintf("SELECT * FROM %s WHERE %s", $class::getTable(), implode(" AND ", array_map(function($criterion, $value) {
@@ -39,6 +45,13 @@ class Database
     }
 
     public function findPerPage($class, $first, $nbr)
+    {
+        $statement= $this->pdo->query(sprintf('SELECT * FROM %s ORDER BY ordre LIMIT '. $first. ',' .$nbr.'', $class::getTable()));
+        return $statement->fetchAll();
+
+    }
+
+    public function findPerPageDesc($class, $first, $nbr)
     {
         $statement= $this->pdo->query(sprintf('SELECT * FROM %s ORDER BY ordre DESC LIMIT '.$first.','.$nbr.'', $class::getTable()));
         return $statement->fetchAll();
