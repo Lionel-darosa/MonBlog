@@ -51,9 +51,9 @@ class Database
 
     }
 
-    public function findPerPageDesc($class, $first, $nbr)
+    public function findPerPageDesc($class, $first, $nbr, $id)
     {
-        $statement= $this->pdo->query(sprintf('SELECT * FROM %s ORDER BY ordre DESC LIMIT '.$first.','.$nbr.'', $class::getTable()));
+        $statement= $this->pdo->query(sprintf('SELECT * FROM %s WHERE article_id=%s ORDER BY date_Comment DESC LIMIT '.$first.','.$nbr.'', $class::getTable(), $id));
         return $statement->fetchAll();
 
     }
@@ -86,9 +86,16 @@ class Database
         $this->pdo->exec(sprintf("INSERT INTO %s SET %s", $object::getTable(), implode(",", $columns)));
     }
 
-    public function count($class)
+    public function countPosts($class)
     {
         $req=$this->pdo->query(sprintf("SELECT COUNT(*) AS content FROM %s", $class::getTable()));
+        $total= $req->fetch();
+        return $total['content'];
+    }
+
+    public function countComments($class, $id)
+    {
+        $req=$this->pdo->query(sprintf("SELECT COUNT(*) AS content FROM %s WHERE article_id=%s", $class::getTable(), $id));
         $total= $req->fetch();
         return $total['content'];
     }

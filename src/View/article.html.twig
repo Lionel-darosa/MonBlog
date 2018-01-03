@@ -45,17 +45,37 @@
     </div>
 
     <!-- Single Comment -->
-    <div class="col-sm-8 mx-auto">
-        {% for commentaire in article.getCommentaire()%}
+    <div class="col-lg-8 mx-auto" id="commentaires">
+        {% for commentaire in CommentOnPage%}
             <article>
                 <div class="post-preview">
                     <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_comment|date('j F Y') }}</h5>
-                    <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/article/SignalComment/{{ commentaire.id }}">signaler</a></p>
+                    <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/article/SignalComment/{{ commentaire.article_id }}?page={{ _get.page }}">signaler</a></p>
                 </div>
             </article>
             <hr>
         {% endfor %}
+        <!-- Pager -->
+        <div class="post-preview row">
+            <div class="col-sm-5 ">
+                {% if _get.page>1 %}
+                    <a class="btn btn-primary float-left" href="/article/{{ article.id }}?page={{ _get.page-1 }}#commentaires">&larr; Plus récents </a>
+                {% endif %}
+            </div>
+            <div class="col-sm-2 ">
+                {% if nbrPages>1 %}
+                    <p class="badge ml-sm-3 mt-sm-3">Page {{ _get.page }}/{{ nbrPages }}</p>
+                {% endif %}
+            </div>
+            <div class="col-sm-5 ">
+                {% if _get.page<nbrPages %}
+                    <a class="btn btn-primary float-right" href="/article/{{ article.id }}?page={{ _get.page+1 }}#commentaires">Plus anciens &rarr;</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
+
+
 {% endblock %}
 
 {% block footer %}

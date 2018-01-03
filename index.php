@@ -21,11 +21,11 @@ $router = new Router();
 
 $router->add(New Route('Accueil',  '#^/$#', 'Controller\FrontController', 'Accueil'));
 $router->add(New Route('Posts',  '#^/articles\?page=([0-9]+)$#', 'Controller\FrontController', 'Posts'));
-$router->add(New Route('Post',  '#^/article/([0-9]+)$#', 'Controller\FrontController', 'Post'));
+$router->add(New Route('Post',  '#^/article/([0-9]+)\?page=([0-9]+)$#', 'Controller\FrontController', 'Post'));
 $router->add(New Route('APropos',  '#^/APropos$#', 'Controller\FrontController', 'About'));
 $router->add(New Route('Contact',  '#^/Contact$#', 'Controller\FrontController', 'Contact'));
 $router->add(New Route('AddComment',  '#^/article/AddComment/([0-9]+)$#', 'Controller\FrontController', 'AddComment'));
-$router->add(New Route('SignalComment',  '#^/article/SignalComment/([0-9]+)$#', 'Controller\FrontController', 'Signal'));
+$router->add(New Route('SignalComment',  '#^/article/SignalComment/([0-9]+)\?page=([0-9]+)$#', 'Controller\FrontController', 'Signal'));
 $router->add(New Route('LogIn',  '#^/LogIn$#', 'Controller\FrontController', 'LogIn'));
 $router->add(New Route('BackPosts',  '#^/admin/articles$#', 'Controller\BackController', 'Posts'));
 $router->add(New Route('BackPost',  '#^/admin/article/([0-9]+)$#', 'Controller\BackController', 'Post'));

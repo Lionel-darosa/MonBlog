@@ -22,10 +22,10 @@
     <!-- Main Content -->
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="col-lg-8 col-md-10 mx-auto" id="articles">
                 {% for article in postsOnPage %}
                     <div class="post-preview">
-                        <a href="/article/{{ article.id }}">
+                        <a href="/article/{{ article.id }}?page=1">
                             <h2 class="post-title">
                                 {{ article.titre }}
                             </h2>
@@ -48,17 +48,17 @@
 
                 <!-- Pager -->
                 <div class="post-preview row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         {% if _get.page>1 %}
-                            <a class="btn btn-primary float-left" href="/articles?page={{ _get.page-1 }}">&larr; Précédents </a>
+                            <a class="btn btn-primary float-left" href="/articles?page={{ _get.page-1 }}#articles">&larr; Précédents </a>
                         {% endif %}
                     </div>
-                    <div class="col-sm-4">
-                        <p class="badge ml-sm-5 mt-sm-6">Page {{ _get.page }}/{{ nbrPages }}</p>
+                    <div class="col-sm-2">
+                        <p class="badge ml-sm-3 mt-sm-3">Page {{ _get.page }}/{{ nbrPages }}</p>
                     </div>
-                    <div class="col-sm-4">
-                        {% if _get.page<nbrPages %}
-                            <a class="btn btn-primary float-right" href="/articles?page={{ _get.page+1 }}">Suivants &rarr;</a>
+                    <div class="col-sm-5">
+                        {% if _get.page<nbrPages and nbrPages>1 %}
+                            <a class="btn btn-primary float-right" href="/articles?page={{ _get.page+1 }}#articles">Suivants &rarr;</a>
                         {% endif %}
                     </div>
                 </div>

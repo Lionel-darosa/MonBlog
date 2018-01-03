@@ -20,6 +20,7 @@ abstract class Controller
     {
         $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../src/View');
         $this->twig = new \Twig_Environment($loader);
+        $this->twig->addGlobal('_get', $_GET);
     }
 
     /**

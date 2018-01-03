@@ -56,7 +56,7 @@ class Article extends Entity
         return "articles";
     }
 
-    public function getCommentaire()
+    public function getCommentaires()
     {
         if($this->commentaires === null) {
             $this->commentaires = $this->database->findAll(Commentaire::class, ["article_id" => $this->id]);

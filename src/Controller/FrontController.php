@@ -32,11 +32,11 @@ class FrontController extends Controller
     public function Posts($page)
     {
         $nbrPerPage=5;
-        $nbrArticles=$this->getDatabase()->count(Article::class);
+        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
         $nbrPages= ceil($nbrArticles / $nbrPerPage);
         $firstEnter=($page-1)*$nbrPerPage;
         $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
-        $this->twig->addGlobal('_get', $_GET);
+
         $this->render('articles.html.twig', ["postsOnPage"=>$postsOnPage, "nbrPages"=>$nbrPages]);
     }
 
@@ -47,7 +47,12 @@ class FrontController extends Controller
     public function Post($id)
     {
         $article= $this->getDatabase()->find(Article::class, $id);
-        $this->render('article.html.twig', ["article"=>$article]);
+        $nbrPerPage=5;
+        $nbrComments=$this->getDatabase()->countComments(Commentaire::class, $id);
+        $nbrPages= ceil($nbrComments/$nbrPerPage);
+        $firstEnter= ($_GET["page"]-1)*$nbrPerPage;
+        $CommentsOnPage= $this->getDatabase()->findPerPageDesc(Commentaire::class, $firstEnter, $nbrPerPage, $id);
+        $this->render('article.html.twig', ["article"=>$article, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages]);
     }
 
     /**
@@ -75,7 +80,7 @@ class FrontController extends Controller
         $newComment->setArticleId($id);
         $newComment->setSignale('0');
         $this->getDatabase()->insert($newComment);
-        $this->redirect('/article/'.$id);
+        $this->redirect('/article/'.$id.'?page=1');
     }
 
     public function Signal($id)
@@ -83,7 +88,7 @@ class FrontController extends Controller
         $comment= $this->getDatabase()->find(Commentaire::class, $id);
         $comment->setSignale('1');
         $this->getDatabase()->update($comment);
-        $this->redirect('/article/'.$comment->getArticleId());
+        $this->redirect('/article/'.$comment->getArticleId().'?page='.$_GET["page"].'#commentaires');
     }
 
     /**

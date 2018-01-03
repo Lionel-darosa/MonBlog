@@ -31,7 +31,7 @@ class BackController extends Controller
     public function Post($id)
     {
         $article= $this->getDatabase()->find(Article::class, $id);
-        $reportComment= $this->getDatabase()->findall(Commentaire::class, ["signale"=>'1']);
+        $reportComment= $this->getDatabase()->findall(Commentaire::class, ["signale"=>'1', "article_id"=>$id]);
         $this->render('adminArticle.html.twig', ["article"=>$article, "reportComment"=>$reportComment]);
     }
 
