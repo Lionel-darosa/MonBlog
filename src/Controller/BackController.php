@@ -21,7 +21,7 @@ class BackController extends Controller
      */
     public function Posts()
     {
-        $articles= $this->getDatabase()->findAll(Article::class, [""]);
+        $articles= $this->getDatabase()->findPerPage(Article::class,'0','1000');
         $this->render('admin.html.twig', ["articles"=>$articles]);
     }
 
@@ -48,14 +48,21 @@ class BackController extends Controller
      */
     public function InsertPost()
     {
-        $database=new Database();
+        $database= new Database();
         $newArticle = new Article($database);
         $newArticle->setTitre($_POST['titre']);
         $newArticle->setAuteur($_POST['auteur']);
         $newArticle->setArticle($_POST['article']);
         $newArticle->setOrdre($_POST['ordre']);
-        $this->getDatabase()->insert($newArticle);
-        $this->redirect('/admin/articles');
+
+        if ($this->getDatabase()->findall(Article::class, ['ordre'=>$newArticle->getOrdre()])== true){
+            $this->getDatabase()->changeOrdre($newArticle->getOrdre(),'+');
+            $this->getDatabase()->insert($newArticle);
+            $this->redirect('/admin/articles');
+        }else{
+            $this->getDatabase()->insert($newArticle);
+            $this->redirect('/admin/articles');
+        }
     }
 
     /**
@@ -77,8 +84,19 @@ class BackController extends Controller
         $article->setAuteur($_POST['auteur']);
         $article->setArticle($_POST['article']);
         $article->setOrdre($_POST['ordre']);
-        $this->getDatabase()->update($article);
-        $this->redirect('/admin/articles');
+
+        if ($article->getOrdre() == $this->getDatabase()->find(Article::class, $id)->getOrdre()){
+            $this->getDatabase()->update($article);
+            $this->redirect('/admin/articles');
+        }elseif ($article->getOrdre() > $this->getDatabase()->find(Article::class, $id)->getOrdre()){
+            $this->getDatabase()->changeOrdreUpdate('-', $this->getDatabase()->find(Article::class, $id)->getOrdre().'<', '<='.$article->getOrdre());
+            $this->getDatabase()->update($article);
+            $this->redirect('/admin/articles');
+        }elseif ($article->getOrdre() < $this->getDatabase()->find(Article::class, $id)->getOrdre()){
+            $this->getDatabase()->changeOrdreUpdate('+', $this->getDatabase()->find(Article::class, $id)->getOrdre().'>', '>='.$article->getOrdre());
+            $this->getDatabase()->update($article);
+            $this->redirect('/admin/articles');
+        }
     }
 
     /**
