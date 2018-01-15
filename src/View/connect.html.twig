@@ -1,0 +1,47 @@
+{% extends "layout.html.twig" %}
+
+
+
+{% block header %}
+    <!-- Page Header -->
+    <header class="masthead" >
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="site-heading">
+                        <h2>Connection administrateur</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block section %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="badge badge-danger">{{ message }}</div>
+                <form name="connect" method="post" action="/LogIn/Control">
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label for="titre">Identifiant: </label>
+                            <input type="text" name="Id" class="form-control" placeholder="Identifiant"  >
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label for="Pass">Password</label>
+                            <input type="password" name="Pass" class="form-control" placeholder="Password" " >
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+
+                    <button>Se Connecter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

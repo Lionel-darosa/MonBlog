@@ -96,6 +96,24 @@ class FrontController extends Controller
      */
     public function LogIn()
     {
-        echo "LogIn ";
+        $this->render('connect.html.twig', array());
+    }
+
+    public function LogInControl()
+    {
+        if (empty($_POST['Id']) && empty($_POST['Pass'])){
+            $message='Veuillez rentrer un identifiant et un mot de passe';
+            $this->render('connect.html.twig', ['message'=>$message]);
+        }else if (isset($_POST['Id']) && isset($_POST['Pass'])) {
+
+            if ($_POST['Id'] === 'admin' && $_POST['Pass'] === '1234') {
+                session_start();
+                $_SESSION['Id']= $_POST['Id'];
+                $this->redirect('/admin/articles');
+            } else {
+                $message = 'Vos identifiant et mots de passe ne sont pas correct';
+                $this->render('connect.html.twig', ['message' => $message]);
+            }
+        }
     }
 }

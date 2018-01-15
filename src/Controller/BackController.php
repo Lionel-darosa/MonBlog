@@ -57,12 +57,9 @@ class BackController extends Controller
 
         if ($this->getDatabase()->findall(Article::class, ['ordre'=>$newArticle->getOrdre()])== true){
             $this->getDatabase()->changeOrdre($newArticle->getOrdre(),'+');
-            $this->getDatabase()->insert($newArticle);
-            $this->redirect('/admin/articles');
-        }else{
-            $this->getDatabase()->insert($newArticle);
-            $this->redirect('/admin/articles');
         }
+        $this->getDatabase()->insert($newArticle);
+        $this->redirect('/admin/articles');
     }
 
     /**
@@ -80,23 +77,20 @@ class BackController extends Controller
     public function UpdatePost($id)
     {
         $article = $this->getDatabase()->find(Article::class, $id );
+        $originalArticle= clone $article;
         $article->setTitre($_POST['titre']);
         $article->setAuteur($_POST['auteur']);
         $article->setArticle($_POST['article']);
         $article->setOrdre($_POST['ordre']);
 
-        if ($article->getOrdre() == $this->getDatabase()->find(Article::class, $id)->getOrdre()){
-            $this->getDatabase()->update($article);
-            $this->redirect('/admin/articles');
-        }elseif ($article->getOrdre() > $this->getDatabase()->find(Article::class, $id)->getOrdre()){
-            $this->getDatabase()->changeOrdreUpdate('-', $this->getDatabase()->find(Article::class, $id)->getOrdre().'<', '<='.$article->getOrdre());
-            $this->getDatabase()->update($article);
-            $this->redirect('/admin/articles');
-        }elseif ($article->getOrdre() < $this->getDatabase()->find(Article::class, $id)->getOrdre()){
-            $this->getDatabase()->changeOrdreUpdate('+', $this->getDatabase()->find(Article::class, $id)->getOrdre().'>', '>='.$article->getOrdre());
-            $this->getDatabase()->update($article);
-            $this->redirect('/admin/articles');
+        if ($article->getOrdre() > $originalArticle->getOrdre()){
+            $this->getDatabase()->changeOrdreUpdate('-', $originalArticle->getOrdre().'<', '<='.$article->getOrdre());
+        }elseif ($article->getOrdre() < $originalArticle->getOrdre()) {
+            $this->getDatabase()->changeOrdreUpdate('+', $originalArticle->getOrdre() . '>', '>=' . $article->getOrdre());
         }
+        $this->getDatabase()->update($article);
+        $this->redirect('/admin/articles');
+
     }
 
     /**
@@ -119,6 +113,14 @@ class BackController extends Controller
         $comment= $database->find(Commentaire::class, $id);
         $database->delete($comment);
         $this->redirect('/admin/article/'.$comment->getArticleId());
+    }
+
+    public function LogOut ()
+    {
+        session_start();
+        session_unset();
+        session_destroy();
+        $this->redirect('/');
     }
 
 }

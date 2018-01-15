@@ -50,7 +50,7 @@
             <article>
                 <div class="post-preview">
                     <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_comment|date('j F Y') }}</h5>
-                    <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/article/SignalComment/{{ commentaire.article_id }}?page={{ _get.page }}">signaler</a></p>
+                    <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/article/SignalComment/{{ commentaire.id }}?page={{ _get.page }}">signaler</a></p>
                 </div>
             </article>
             <hr>
@@ -111,6 +111,11 @@
                         </li>
                     </ul>
                     <p class="copyright text-muted">Copyright &copy; Your Website 2017</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-2 col-md-2 mx-auto">
+                    <a class="copyright text-muted" href="/LogIn">Administration</a>
                 </div>
             </div>
         </div>
