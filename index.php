@@ -19,25 +19,24 @@ $requestUri = $_SERVER["REQUEST_URI"];
 $router = new Router();
 
 
-$router->add(New Route('Accueil',  '#^/$#', 'Controller\FrontController', 'Accueil'));
-$router->add(New Route('Posts',  '#^/articles\?page=([0-9]+)$#', 'Controller\FrontController', 'Posts'));
-$router->add(New Route('Post',  '#^/article/([0-9]+)\?page=([0-9]+)$#', 'Controller\FrontController', 'Post'));
-$router->add(New Route('APropos',  '#^/APropos$#', 'Controller\FrontController', 'About'));
-$router->add(New Route('Contact',  '#^/Contact$#', 'Controller\FrontController', 'Contact'));
-$router->add(New Route('AddComment',  '#^/article/AddComment/([0-9]+)$#', 'Controller\FrontController', 'AddComment'));
-$router->add(New Route('SignalComment',  '#^/article/SignalComment/([0-9]+)\?page=([0-9]+)$#', 'Controller\FrontController', 'Signal'));
-$router->add(New Route('LogIn',  '#^/LogIn$#', 'Controller\FrontController', 'LogIn'));
-$router->add(New Route('LogInControl',  '#^/LogIn/Control$#', 'Controller\FrontController', 'LogInControl'));
-$router->add(New Route('BackPosts',  '#^/admin/articles$#', 'Controller\BackController', 'Posts'));
-$router->add(New Route('BackPost',  '#^/admin/article/([0-9]+)$#', 'Controller\BackController', 'Post'));
-$router->add(New Route('NewPost',  '#^/admin/NewArticle$#', 'Controller\BackController', 'NewPost'));
-$router->add(New Route('InsertPost',  '#^/admin/InsertArticle$#', 'Controller\BackController', 'InsertPost'));
-$router->add(New Route('NewUpdatePost',  '#^/admin/NewUpdateArticle/([0-9]+)$#', 'Controller\BackController', 'NewUpdatePost'));
-$router->add(New Route('UpdatePost',  '#^/admin/UpdateArticle/([0-9]+)$#', 'Controller\BackController', 'UpdatePost'));
-$router->add(New Route('DeletePost',  '#^/admin/DeleteArticle/([0-9]+)$#', 'Controller\BackController', 'DeletePost'));
-$router->add(New Route('DeleteComment',  '#^/admin/DeleteComment/([0-9]+)$#', 'Controller\BackController', 'DeleteComment'));
-$router->add(New Route('LogOut',  '#^/admin/LogOut$#', 'Controller\BackController', 'LogOut'));
+$router->add(New Route('Accueil',  '#^/$#', 'Controller\FrontController', 'Accueil', '0'));
+$router->add(New Route('Posts',  '#^/articles\?page=([0-9]+)$#', 'Controller\FrontController', 'Posts','0'));
+$router->add(New Route('Post',  '#^/article/([0-9]+)\?page=([0-9]+)$#', 'Controller\FrontController', 'Post', '0'));
+$router->add(New Route('APropos',  '#^/APropos$#', 'Controller\FrontController', 'About', '0'));
+$router->add(New Route('Contact',  '#^/Contact$#', 'Controller\FrontController', 'Contact', '0'));
+$router->add(New Route('AddComment',  '#^/article/AddComment/([0-9]+)$#', 'Controller\FrontController', 'AddComment', '0'));
+$router->add(New Route('SignalComment',  '#^/article/SignalComment/([0-9]+)\?page=([0-9]+)$#', 'Controller\FrontController', 'Signal', '0'));
+$router->add(New Route('LogIn',  '#^/LogIn$#', 'Controller\FrontController', 'LogIn', '0'));
+$router->add(New Route('LogInControl',  '#^/LogIn/Control$#', 'Controller\FrontController', 'LogInControl', '0'));
+$router->add(New Route('BackPosts',  '#^/admin/articles$#', 'Controller\BackController', 'Posts', '1'));
+$router->add(New Route('BackPost',  '#^/admin/article/([0-9]+)$#', 'Controller\BackController', 'Post', '1'));
+$router->add(New Route('NewPost',  '#^/admin/NewArticle$#', 'Controller\BackController', 'NewPost', '1'));
+$router->add(New Route('InsertPost',  '#^/admin/InsertArticle$#', 'Controller\BackController', 'InsertPost', '1'));
+$router->add(New Route('NewUpdatePost',  '#^/admin/NewUpdateArticle/([0-9]+)$#', 'Controller\BackController', 'NewUpdatePost', '1'));
+$router->add(New Route('UpdatePost',  '#^/admin/UpdateArticle/([0-9]+)$#', 'Controller\BackController', 'UpdatePost', '1'));
+$router->add(New Route('DeletePost',  '#^/admin/DeleteArticle/([0-9]+)$#', 'Controller\BackController', 'DeletePost', '1'));
+$router->add(New Route('DeleteComment',  '#^/admin/DeleteComment/([0-9]+)$#', 'Controller\BackController', 'DeleteComment', '1'));
+$router->add(New Route('LogOut',  '#^/admin/LogOut$#', 'Controller\BackController', 'LogOut', '1'));
 
 $route = $router->match($requestUri);
-
 $route->call($requestUri);

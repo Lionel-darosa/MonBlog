@@ -109,6 +109,7 @@ class FrontController extends Controller
             if ($_POST['Id'] === 'admin' && $_POST['Pass'] === '1234') {
                 session_start();
                 $_SESSION['Id']= $_POST['Id'];
+                var_dump($_SESSION['Id']);
                 $this->redirect('/admin/articles');
             } else {
                 $message = 'Vos identifiant et mots de passe ne sont pas correct';
