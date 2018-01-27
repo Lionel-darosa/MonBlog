@@ -4,7 +4,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
         <div class="container">
-            <a class="navbar-brand" href="/admin/articles">Accueil administration</a>
+            <a class="navbar-brand" href="/admin/articles?page=1">Accueil administration</a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
                 <i class="fa fa-bars"></i>
@@ -13,7 +13,7 @@
                 <ul class="navbar-nav ml-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/articles">Articles</a>
+                        <a class="nav-link" href="/admin/comments?page=1">Commentaires signalés</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/LogOut">Déconnection</a>
@@ -26,7 +26,7 @@
 
 {% block header %}
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('/bootstrap/img/home-bg.jpg')">
+    <header class="masthead" style="background-image: url('/bootstrap/img/route_alaska.jpg')">
         <div class="overlay"></div>
         <div class="container">
             <div class="row">
@@ -45,8 +45,11 @@
     <!-- Main Content -->
 
     <section class="col-sm-12 table-responsive">
+        <div class="clearfix">
+            <a class="btn btn-primary float-left" href="/admin/NewArticle">Nouvel Article </a>
+        </div>
         <table class="table table-bordered table-striped ">
-            <h2>Articles</h2>
+            <h2 id="article">Articles</h2>
             <thead>
                 <tr>
                     <th>n°</th>
@@ -57,7 +60,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for article in articles %}
+                {% for article in postsOnPage %}
                     <tr>
                         <td>{{ article.ordre }}</td>
                         <td>{{ article.titre }}</td>
@@ -70,8 +73,20 @@
                 {% endfor %}
             </tbody>
         </table>
-        <div class="clearfix">
-            <a class="btn btn-primary float-left" href="/admin/NewArticle">Nouvel Article </a>
+        <div class="post-preview row">
+            <div class="col-sm-5">
+                {% if _get.page>1 %}
+                    <a class="btn btn-primary float-left" href="/admin/articles?page={{ _get.page-1 }}#article">&larr; Précédents </a>
+                {% endif %}
+            </div>
+            <div class="col-sm-2">
+                <p class="badge ml-sm-3 mt-sm-3">Page {{ _get.page }}/{{ nbrPages }}</p>
+            </div>
+            <div class="col-sm-5">
+                {% if _get.page<nbrPages and nbrPages>1 %}
+                    <a class="btn btn-primary float-right" href="/admin/articles?page={{ _get.page+1 }}#article">Suivants &rarr;</a>
+                {% endif %}
+            </div>
         </div>
     </section>
 {% endblock %}

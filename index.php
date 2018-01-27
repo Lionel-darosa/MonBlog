@@ -28,12 +28,11 @@ $router->add(New Route('AddComment',  '#^/article/AddComment/([0-9]+)$#', 'Contr
 $router->add(New Route('SignalComment',  '#^/article/SignalComment/([0-9]+)\?page=([0-9]+)$#', 'Controller\FrontController', 'Signal', '0'));
 $router->add(New Route('LogIn',  '#^/LogIn$#', 'Controller\FrontController', 'LogIn', '0'));
 $router->add(New Route('LogInControl',  '#^/LogIn/Control$#', 'Controller\FrontController', 'LogInControl', '0'));
-$router->add(New Route('BackPosts',  '#^/admin/articles$#', 'Controller\BackController', 'Posts', '1'));
+$router->add(New Route('BackPosts',  '#^/admin/articles\?page=([0-9]+)$#', 'Controller\BackController', 'Posts', '1'));
+$router->add(New Route('BackComments',  '#^/admin/comments\?page=([0-9]+)$#', 'Controller\BackController', 'Comments', '1'));
 $router->add(New Route('BackPost',  '#^/admin/article/([0-9]+)$#', 'Controller\BackController', 'Post', '1'));
 $router->add(New Route('NewPost',  '#^/admin/NewArticle$#', 'Controller\BackController', 'NewPost', '1'));
-$router->add(New Route('InsertPost',  '#^/admin/InsertArticle$#', 'Controller\BackController', 'InsertPost', '1'));
 $router->add(New Route('NewUpdatePost',  '#^/admin/NewUpdateArticle/([0-9]+)$#', 'Controller\BackController', 'NewUpdatePost', '1'));
-$router->add(New Route('UpdatePost',  '#^/admin/UpdateArticle/([0-9]+)$#', 'Controller\BackController', 'UpdatePost', '1'));
 $router->add(New Route('DeletePost',  '#^/admin/DeleteArticle/([0-9]+)$#', 'Controller\BackController', 'DeletePost', '1'));
 $router->add(New Route('DeleteComment',  '#^/admin/DeleteComment/([0-9]+)$#', 'Controller\BackController', 'DeleteComment', '1'));
 $router->add(New Route('LogOut',  '#^/admin/LogOut$#', 'Controller\BackController', 'LogOut', '1'));

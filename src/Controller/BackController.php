@@ -19,10 +19,14 @@ class BackController extends Controller
     /**
      *
      */
-    public function Posts()
+    public function Posts($page)
     {
-        $articles= $this->getDatabase()->findPerPage(Article::class,'0','1000');
-        $this->render('admin.html.twig', ["articles"=>$articles]);
+        $nbrPerPage=10;
+        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
+        $nbrPages= ceil($nbrArticles / $nbrPerPage);
+        $firstEnter=($page-1)*$nbrPerPage;
+        $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
+        $this->render('admin.html.twig', ["postsOnPage"=>$postsOnPage, "nbrPages"=>$nbrPages]);
     }
 
     /**
@@ -35,31 +39,53 @@ class BackController extends Controller
         $this->render('adminArticle.html.twig', ["article"=>$article, "reportComment"=>$reportComment]);
     }
 
-    /**
-     *
-     */
-    public function NewPost()
+    public function Comments($page)
     {
-        $this->render('NewPost.html.twig', array());
+        $nbrPerPage=10;
+        $nbrSignalComment=$this->getDatabase()->countComments(Commentaire::class, "1");
+        $nbrPages= ceil($nbrSignalComment / $nbrPerPage);
+        $firstEnter=($page-1)*$nbrPerPage;
+        $reportComment= $this->getDatabase()->findComment($firstEnter, $nbrPerPage, "1");
+        $this->render('adminComments.html.twig', ["reportComment"=>$reportComment, "nbrPages"=>$nbrPages]);
     }
 
     /**
      *
      */
-    public function InsertPost()
+    public function NewPost()
     {
-        $database= new Database();
-        $newArticle = new Article($database);
-        $newArticle->setTitre($_POST['titre']);
-        $newArticle->setAuteur($_POST['auteur']);
-        $newArticle->setArticle($_POST['article']);
-        $newArticle->setOrdre($_POST['ordre']);
+        $erreur=[];
 
-        if ($this->getDatabase()->findall(Article::class, ['ordre'=>$newArticle->getOrdre()])== true){
-            $this->getDatabase()->changeOrdre($newArticle->getOrdre(),'+');
+        if ($_SERVER["REQUEST_METHOD"] == "POST"){
+            if (!isset($_POST["titre"]) || empty($_POST["titre"])){
+                $erreur["titre"]= "Veuillez saisir un titre";
+            }
+            if (!isset($_POST["auteur"]) || empty($_POST["auteur"])){
+                $erreur["auteur"]= "Veuillez saisir un auteur";
+            }
+            if (!isset($_POST["article"]) || empty($_POST["article"])){
+                $erreur["article"]= "Veuillez saisir un article";
+            }
+            if (!isset($_POST["ordre"]) || empty($_POST["ordre"])){
+                $erreur["ordre"]= "Veuillez saisir un numero d'article";
+            }
+            if (count($erreur)==0){
+                $database = new Database();
+                $article = new Article($database);
+                $article->setTitre($_POST['titre']);
+                $article->setAuteur($_POST['auteur']);
+                $article->setArticle($_POST['article']);
+                $article->setOrdre($_POST['ordre']);
+
+                if ($this->getDatabase()->findall(Article::class, ['ordre' => $article->getOrdre()]) == true) {
+                    $this->getDatabase()->changeOrdre($article->getOrdre(), '+');
+                }
+                $this->getDatabase()->insert($article);
+                $this->redirect('/admin/articles?page=1');
+            }
         }
-        $this->getDatabase()->insert($newArticle);
-        $this->redirect('/admin/articles');
+        $route="NewArticle";
+        $this->render('NewPost.html.twig', ["article"=>$_POST, "erreur"=>$erreur, "route"=>$route]);
     }
 
     /**
@@ -67,30 +93,46 @@ class BackController extends Controller
      */
     public function NewUpdatePost($id)
     {
-        $article= $this->getDatabase()->find(Article::class, $id);
-        $this->render('updatePost.html.twig', ["article"=>$article]);
-    }
-
-    /**
-     * @param $id
-     */
-    public function UpdatePost($id)
-    {
         $article = $this->getDatabase()->find(Article::class, $id );
-        $originalArticle= clone $article;
-        $article->setTitre($_POST['titre']);
-        $article->setAuteur($_POST['auteur']);
-        $article->setArticle($_POST['article']);
-        $article->setOrdre($_POST['ordre']);
+        $erreur=[];
 
-        if ($article->getOrdre() > $originalArticle->getOrdre()){
-            $this->getDatabase()->changeOrdreUpdate('-', $originalArticle->getOrdre().'<', '<='.$article->getOrdre());
-        }elseif ($article->getOrdre() < $originalArticle->getOrdre()) {
-            $this->getDatabase()->changeOrdreUpdate('+', $originalArticle->getOrdre() . '>', '>=' . $article->getOrdre());
+        if ($_SERVER["REQUEST_METHOD"] == "POST"){
+            if (!isset($_POST["titre"]) || empty($_POST["titre"])){
+                $erreur["titre"]= "Veuillez saisir un titre";
+            }
+            if (!isset($_POST["auteur"]) || empty($_POST["auteur"])){
+                $erreur["auteur"]= "Veuillez saisir un auteur";
+            }
+            if (!isset($_POST["article"]) || empty($_POST["article"])){
+                $erreur["article"]= "Veuillez saisir un article";
+            }
+            if (!isset($_POST["ordre"]) || empty($_POST["ordre"])){
+                $erreur["ordre"]= "Veuillez saisir un numero d'article";
+            }
+            if (count($erreur)==0){
+                $originalArticle= clone $article;
+                $article->setTitre($_POST['titre']);
+                $article->setAuteur($_POST['auteur']);
+                $article->setArticle($_POST['article']);
+                $article->setOrdre($_POST['ordre']);
+
+                if ($article->getOrdre() > $originalArticle->getOrdre()){
+                    $this->getDatabase()->changeOrdreUpdate('-', $originalArticle->getOrdre().'<', '<='.$article->getOrdre());
+                }elseif ($article->getOrdre() < $originalArticle->getOrdre()) {
+                    $this->getDatabase()->changeOrdreUpdate('+', $originalArticle->getOrdre() . '>', '>=' . $article->getOrdre());
+                }
+                $this->getDatabase()->update($article);
+                $this->redirect('/admin/articles?page=1');
+            }
+            $article->setTitre($_POST['titre']);
+            $article->setAuteur($_POST['auteur']);
+            $article->setArticle($_POST['article']);
+            $article->setOrdre($_POST['ordre']);
+            $route="NewUpdateArticle/".$id;
+            $this->render('NewPost.html.twig', ["article"=>$article, "erreur"=>$erreur, "route"=>$route]);
         }
-        $this->getDatabase()->update($article);
-        $this->redirect('/admin/articles');
-
+        $route="NewUpdateArticle/".$id;
+        $this->render('NewPost.html.twig', ["article"=>$article, "erreur"=>$erreur, "route"=>$route]);
     }
 
     /**
@@ -101,7 +143,7 @@ class BackController extends Controller
         $database= new Database();
         $article= $database->find(Article::class, $id);
         $database->delete($article);
-        $this->redirect('/admin/articles');
+        $this->redirect('/admin/articles?page=1');
     }
 
     /**

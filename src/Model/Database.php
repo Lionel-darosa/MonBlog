@@ -88,6 +88,12 @@ class Database
 
     }
 
+    public function findComment($first, $nbr, $report)
+    {
+        $statement= $this->pdo->query(sprintf('SELECT * FROM commentaires WHERE signale=%s ORDER BY date_Comment DESC LIMIT '.$first.','.$nbr.'', $report));
+        return $statement->fetchAll();
+    }
+
     /**
      * @param $object
      */
@@ -159,9 +165,16 @@ class Database
      * @param $id
      * @return mixed
      */
-    public function countComments($class, $id)
+    public function countCommentsArticle($class, $id)
     {
         $req=$this->pdo->query(sprintf("SELECT COUNT(*) AS content FROM %s WHERE article_id=%s", $class::getTable(), $id));
+        $total= $req->fetch();
+        return $total['content'];
+    }
+
+    public function countComments($class, $signale)
+    {
+        $req=$this->pdo->query(sprintf("SELECT COUNT(*) AS content FROM %s WHERE signale=%s", $class::getTable(), $signale));
         $total= $req->fetch();
         return $total['content'];
     }

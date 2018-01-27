@@ -3,7 +3,7 @@
 
 {% block header %}
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('/bootstrap/img/alaska.jpg')">
+    <header class="masthead" style="background-image: url('/bootstrap/img/rail_alaska.jpg')">
         <div class="overlay"></div>
         <div class="container">
             <div class="row">
@@ -19,6 +19,20 @@
 {% endblock %}
 
 {% block section %}
+    <!-- Pager -->
+    <div class="post-preview row col-lg-8 col-md-10 mx-auto">
+        <div class="col-sm-6">
+            {% if article.ordre>1 %}
+                <a class="btn btn-primary float-left" href="/article/{{ article.ordre -1 }}?page=1">&larr; Précédent </a>
+            {% endif %}
+        </div>
+        <div class="col-sm-6">
+            {% if article.ordre< nbrArticles  and  nbrArticles>1 %}
+                <a class="btn btn-primary float-right" href="/article/{{ article.ordre +1 }}?page=1">Suivant &rarr;</a>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Post Content -->
     <article>
         <div class="container">
@@ -30,9 +44,27 @@
         </div>
     </article>
 
+    <!-- Pager -->
+    <div class="post-preview row col-lg-8 col-md-10 mx-auto">
+        <div class="col-sm-5">
+            {% if article.ordre>1 %}
+                <a class="btn btn-primary float-left" href="/article/{{ article.ordre -1 }}?page=1">&larr; Précédent </a>
+            {% endif %}
+        </div>
+        <div class="col-sm-2">
+            <p class="badge ml-sm-3 mt-sm-3">Article {{ article.ordre }}/{{ nbrArticles }}</p>
+        </div>
+        <div class="col-sm-5">
+            {% if article.ordre< nbrArticles  and  nbrArticles>1 %}
+                <a class="btn btn-primary float-right" href="/article/{{ article.ordre +1 }}?page=1">Suivant &rarr;</a>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Comments Form -->
     <div class="col-lg-6 mx-auto">
         <h5 class="card-header">Laissez un commentaire:</h5>
+        <div class="badge badge-danger">{{ message }}</div>
         <div class="card-body">
             <form name="newComment" method="post" action="/article/AddComment/{{ article.id }}">
                 <div class="form-group">

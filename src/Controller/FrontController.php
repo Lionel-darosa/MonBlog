@@ -36,7 +36,6 @@ class FrontController extends Controller
         $nbrPages= ceil($nbrArticles / $nbrPerPage);
         $firstEnter=($page-1)*$nbrPerPage;
         $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
-
         $this->render('articles.html.twig', ["postsOnPage"=>$postsOnPage, "nbrPages"=>$nbrPages]);
     }
 
@@ -46,13 +45,14 @@ class FrontController extends Controller
      */
     public function Post($id)
     {
-        $article= $this->getDatabase()->find(Article::class, $id);
+        $article= $this->getDatabase()->find(Article::class,$id);
         $nbrPerPage=5;
-        $nbrComments=$this->getDatabase()->countComments(Commentaire::class, $id);
+        $nbrComments=$this->getDatabase()->countCommentsArticle(Commentaire::class, $id);
         $nbrPages= ceil($nbrComments/$nbrPerPage);
         $firstEnter= ($_GET["page"]-1)*$nbrPerPage;
         $CommentsOnPage= $this->getDatabase()->findPerPageDesc(Commentaire::class, $firstEnter, $nbrPerPage, $id);
-        $this->render('article.html.twig', ["article"=>$article, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages]);
+        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
+        $this->render('article.html.twig', ["article"=>$article, "nbrArticles"=>$nbrArticles, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages]);
     }
 
     /**
@@ -73,14 +73,31 @@ class FrontController extends Controller
      */
     public function AddComment($id)
     {
-        $database= new Database();
-        $newComment = new Commentaire($database);
-        $newComment->setPseudo($_POST['pseudo']);
-        $newComment->setCommentaire($_POST['commentaire']);
-        $newComment->setArticleId($id);
-        $newComment->setSignale('0');
-        $this->getDatabase()->insert($newComment);
-        $this->redirect('/article/'.$id.'?page=1');
+        if (!empty($_POST['pseudo']) && !empty($_POST['commentaire'])){
+            $database= new Database();
+            $newComment = new Commentaire($database);
+            $newComment->setPseudo($_POST['pseudo']);
+            $newComment->setCommentaire($_POST['commentaire']);
+            $newComment->setArticleId($id);
+            $newComment->setSignale('0');
+            $this->getDatabase()->insert($newComment);
+            $this->redirect('/article/'.$id.'?page=1');
+        }elseif (empty($_POST['pseudo']) && empty($_POST['commentaire'])){
+            $message='Veuillez entrer un pseudo et un commentaire';
+
+        }elseif (empty($_POST['pseudo']) && !empty($_POST['commentaire'])){
+            $message='Veuillez entrer un pseudo';
+        }elseif (!empty($_POST['pseudo']) && empty($_POST['commentaire'])){
+            $message='Veuillez entrer un commentaire';
+        }
+        $article= $this->getDatabase()->find(Article::class, $id);
+        $nbrPerPage=5;
+        $nbrComments=$this->getDatabase()->countCommentsArticle(Commentaire::class, $id);
+        $nbrPages= ceil($nbrComments/$nbrPerPage);
+        $firstEnter= '0';
+        $CommentsOnPage= $this->getDatabase()->findPerPageDesc(Commentaire::class, $firstEnter, $nbrPerPage, $id);
+        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
+        $this->render('article.html.twig', ["article"=>$article, "nbrArticles"=>$nbrArticles, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages, "message"=>$message]);
     }
 
     public function Signal($id)
@@ -110,7 +127,7 @@ class FrontController extends Controller
                 session_start();
                 $_SESSION['Id']= $_POST['Id'];
                 var_dump($_SESSION['Id']);
-                $this->redirect('/admin/articles');
+                $this->redirect('/admin/articles?page=1');
             } else {
                 $message = 'Vos identifiant et mots de passe ne sont pas correct';
                 $this->render('connect.html.twig', ['message' => $message]);

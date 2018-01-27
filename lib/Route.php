@@ -108,10 +108,7 @@ class Route
         session_start();
         if ($this->getSession() == '1'){
             if (!isset($_SESSION['Id'])){
-                preg_match_all('#^/admin/LogOut$#', $requestUri, $matches);
-                $controller= 'Controller\BackController';
-                $controller= new $controller();
-                call_user_func_array(array($controller, 'LogOut'), isset($matches[1]) ? $matches[1] : []);
+                header('Location: http://monblog.test/LogIn');
             }
         }
         preg_match_all($this->getPath(), $requestUri, $matches);
