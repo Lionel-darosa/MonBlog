@@ -61,6 +61,12 @@ class Database
         }, array_keys($criteria), $criteria))))->fetchAll(\PDO::FETCH_CLASS, $class, ["database" => &$this]);
     }
 
+    public function findMinMax($class, $minmaxcolonne)
+    {
+        $statement= $this->pdo->query(sprintf('SELECT %s FROM %s ', $minmaxcolonne, $class::getTable()));
+        return $statement->fetch();
+    }
+
     /**
      * @param $class
      * @param $first

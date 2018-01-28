@@ -46,13 +46,39 @@ class FrontController extends Controller
     public function Post($id)
     {
         $article= $this->getDatabase()->find(Article::class,$id);
+        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
+        $ordre= $article->getOrdre();
+        $lastPost= $this->getDatabase()->findMinMax(Article::class, "MAX(ordre)");
+        $firstPost= $this->getDatabase()->findMinMax(Article::class, "MIN(ordre)");
+        if ($ordre < $lastPost['0'])
+        {
+            $articleSuivant=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordreSuivant=$ordre+1]);
+            while ($articleSuivant==null)
+            {
+                $articleSuivant=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordreSuivant=$ordreSuivant+1]);
+            }
+            $articleSuivant=$articleSuivant['0']->getId();
+        }else{
+            $articleSuivant='0';
+        }
+        if ($ordre>$firstPost['0'])
+        {
+            $articlePrecedent=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordrePrecedent=$ordre-1]);
+            while ($articlePrecedent==null)
+            {
+                $articlePrecedent=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordrePrecedent=$ordrePrecedent-1]);
+            }
+            $articlePrecedent=$articlePrecedent['0']->getId();
+        }else{
+            $articlePrecedent='0';
+            ;
+        }
         $nbrPerPage=5;
         $nbrComments=$this->getDatabase()->countCommentsArticle(Commentaire::class, $id);
         $nbrPages= ceil($nbrComments/$nbrPerPage);
         $firstEnter= ($_GET["page"]-1)*$nbrPerPage;
         $CommentsOnPage= $this->getDatabase()->findPerPageDesc(Commentaire::class, $firstEnter, $nbrPerPage, $id);
-        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
-        $this->render('article.html.twig', ["article"=>$article, "nbrArticles"=>$nbrArticles, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages]);
+        $this->render('article.html.twig', ["article"=>$article, "nbrArticles"=>$nbrArticles, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages, "articleSuivant"=>$articleSuivant, "articlePrecedent"=>$articlePrecedent, "lastPost"=>$lastPost['0']]);
     }
 
     /**

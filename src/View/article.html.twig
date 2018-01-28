@@ -23,12 +23,12 @@
     <div class="post-preview row col-lg-8 col-md-10 mx-auto">
         <div class="col-sm-6">
             {% if article.ordre>1 %}
-                <a class="btn btn-primary float-left" href="/article/{{ article.ordre -1 }}?page=1">&larr; Précédent </a>
+                <a class="btn btn-primary float-left" href="/article/{{ articlePrecedent}}?page=1">&larr; Précédent </a>
             {% endif %}
         </div>
         <div class="col-sm-6">
-            {% if article.ordre< nbrArticles  and  nbrArticles>1 %}
-                <a class="btn btn-primary float-right" href="/article/{{ article.ordre +1 }}?page=1">Suivant &rarr;</a>
+            {% if article.ordre< lastPost   and  lastPost >1 %}
+                <a class="btn btn-primary float-right" href="/article/{{ articleSuivant }}?page=1">Suivant &rarr;</a>
             {% endif %}
         </div>
     </div>
@@ -48,25 +48,25 @@
     <div class="post-preview row col-lg-8 col-md-10 mx-auto">
         <div class="col-sm-5">
             {% if article.ordre>1 %}
-                <a class="btn btn-primary float-left" href="/article/{{ article.ordre -1 }}?page=1">&larr; Précédent </a>
+                <a class="btn btn-primary float-left" href="/article/{{ articlePrecedent}}?page=1">&larr; Précédent </a>
             {% endif %}
         </div>
         <div class="col-sm-2">
-            <p class="badge ml-sm-3 mt-sm-3">Article {{ article.ordre }}/{{ nbrArticles }}</p>
+            <p class="badge ml-sm-3 mt-sm-3">Article {{ article.ordre }}/{{ lastPost }}</p>
         </div>
         <div class="col-sm-5">
-            {% if article.ordre< nbrArticles  and  nbrArticles>1 %}
-                <a class="btn btn-primary float-right" href="/article/{{ article.ordre +1 }}?page=1">Suivant &rarr;</a>
+            {% if article.ordre< lastPost  and  lastPost>1 %}
+                <a class="btn btn-primary float-right" href="/article/{{ articleSuivant}}?page=1">Suivant &rarr;</a>
             {% endif %}
         </div>
     </div>
 
     <!-- Comments Form -->
-    <div class="col-lg-6 mx-auto">
+    <div class="col-lg-6 mx-auto" id="form">
         <h5 class="card-header">Laissez un commentaire:</h5>
         <div class="badge badge-danger">{{ message }}</div>
         <div class="card-body">
-            <form name="newComment" method="post" action="/article/AddComment/{{ article.id }}">
+            <form name="newComment" method="post" action="/article/AddComment/{{ article.id }}#form">
                 <div class="form-group">
                     <input type="text" name="pseudo" class="form-control" placeholder="pseudo"  >
                     <textarea class="form-control" name="commentaire" placeholder="commentaire" rows="3"></textarea>
