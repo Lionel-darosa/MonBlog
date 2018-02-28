@@ -23,12 +23,12 @@
     <div class="post-preview row col-lg-8 col-md-10 mx-auto">
         <div class="col-sm-6">
             {% if article.ordre>1 %}
-                <a class="btn btn-primary float-left" href="/article/{{ articlePrecedent}}?page=1">&larr; Précédent </a>
+                <a class="btn btn-primary float-left" href="/article/{{nextAndPrevious.previous}}?page=1">&larr; Précédent </a>
             {% endif %}
         </div>
         <div class="col-sm-6">
             {% if article.ordre< lastPost   and  lastPost >1 %}
-                <a class="btn btn-primary float-right" href="/article/{{ articleSuivant }}?page=1">Suivant &rarr;</a>
+                <a class="btn btn-primary float-right" href="/article/{{nextAndPrevious.next}}?page=1">Suivant &rarr;</a>
             {% endif %}
         </div>
     </div>
@@ -48,7 +48,7 @@
     <div class="post-preview row col-lg-8 col-md-10 mx-auto">
         <div class="col-sm-5">
             {% if article.ordre>1 %}
-                <a class="btn btn-primary float-left" href="/article/{{ articlePrecedent}}?page=1">&larr; Précédent </a>
+                <a class="btn btn-primary float-left" href="/article/{{nextAndPrevious.previous}}?page=1">&larr; Précédent </a>
             {% endif %}
         </div>
         <div class="col-sm-2">
@@ -56,7 +56,7 @@
         </div>
         <div class="col-sm-5">
             {% if article.ordre< lastPost  and  lastPost>1 %}
-                <a class="btn btn-primary float-right" href="/article/{{ articleSuivant}}?page=1">Suivant &rarr;</a>
+                <a class="btn btn-primary float-right" href="/article/{{nextAndPrevious.next}}?page=1">Suivant &rarr;</a>
             {% endif %}
         </div>
     </div>
@@ -64,12 +64,14 @@
     <!-- Comments Form -->
     <div class="col-lg-6 mx-auto" id="form">
         <h5 class="card-header">Laissez un commentaire:</h5>
-        <div class="badge badge-danger">{{ message }}</div>
+
         <div class="card-body">
-            <form name="newComment" method="post" action="/article/AddComment/{{ article.id }}#form">
+            <form name="newComment" method="post" action="/article/{{ article.id }}?page=1#form">
                 <div class="form-group">
-                    <input type="text" name="pseudo" class="form-control" placeholder="pseudo"  >
-                    <textarea class="form-control" name="commentaire" placeholder="commentaire" rows="3"></textarea>
+                    <div class="badge badge-danger">{{ erreur.pseudo }}</div>
+                    <input type="text" name="pseudo" class="form-control" placeholder="pseudo" value="{{ newComment.pseudo }}" >
+                    <div class="badge badge-danger">{{ erreur.commentaire }}</div>
+                    <textarea class="form-control" name="commentaire" placeholder="commentaire" rows="3">{{ newComment.commentaire }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Envoyer</button>
             </form>
@@ -81,7 +83,7 @@
         {% for commentaire in CommentOnPage%}
             <article>
                 <div class="post-preview">
-                    <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_comment|date('j F Y') }}</h5>
+                    <h5 class="post-meta">{{ commentaire.pseudo }} le {{ commentaire.date_Comment|date('j F Y') }}</h5>
                     <p>{{ commentaire.commentaire }} <br><a class="post-meta small" href="/article/SignalComment/{{ commentaire.id }}?page={{ _get.page }}">signaler</a></p>
                 </div>
             </article>
@@ -143,11 +145,7 @@
                         </li>
                     </ul>
                     <p class="copyright text-muted">Copyright &copy; Your Website 2017</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-2 col-md-2 mx-auto">
-                    <a class="copyright text-muted" href="/LogIn">Administration</a>
+                    <p class="copyright text-muted"><a href="/LogIn">Administration</a></p>
                 </div>
             </div>
         </div>

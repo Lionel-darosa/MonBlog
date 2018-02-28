@@ -37,12 +37,17 @@ class Route
     }
 
 
-
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @param $name
+     */
     public function setName($name)
     {
         $this->name=$name;
@@ -98,11 +103,18 @@ class Route
         $this->action = $action;
     }
 
+    /**
+     * @param $requestUri
+     * @return int
+     */
     public function match($requestUri)
     {
         return preg_match($this->getPath(),$requestUri);
     }
 
+    /**
+     * @param $requestUri
+     */
     public function call($requestUri)
     {
         session_start();

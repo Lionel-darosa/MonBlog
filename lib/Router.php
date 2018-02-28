@@ -13,36 +13,28 @@ class Router
 {
     private $routeCollection;
 
-    /*
-     * @var Collection
-     * Implémenter la propriété
-     * Collection de route
+    /**
+     * Router constructor.
      */
     public function __construct()
     {
         $this->routeCollection= new Collection();
     }
 
-
-
-    /*
+    /**
      * @param Route $route
-     * @return Router
-     * Une méthode pour ajouter une route dans notre collection
      */
     public function add(Route $route)
     {
         $this->routeCollection->add($route);
     }
 
-    /*
+    /**
      * @param $requestUri
-     * @return Route
-     * Méthode qui renvoi la première route qui "match" entre l'url et le patj (regex)
+     * @return mixed|null
      */
     public function match($requestUri)
     {
-
         $routeCollection=$this->routeCollection->filter(function (Route $route ) use ($requestUri){
             return $route->match($requestUri);
         });

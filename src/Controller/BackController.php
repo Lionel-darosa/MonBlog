@@ -10,23 +10,28 @@ namespace Controller;
 
 use Lib\Collection;
 use Lib\Controller;
-use Model\Database;
+use Lib\Database;
+use Manager\ArticleManager;
+use Manager\CommentManager;
 use Model\Article;
 use Model\Commentaire;
 
 class BackController extends Controller
 {
     /**
-     *
+     * @param $page
      */
     public function Posts($page)
     {
         $nbrPerPage=10;
-        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
+        $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
         $nbrPages= ceil($nbrArticles / $nbrPerPage);
         $firstEnter=($page-1)*$nbrPerPage;
-        $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
-        $this->render('admin.html.twig', ["postsOnPage"=>$postsOnPage, "nbrPages"=>$nbrPages]);
+        $postsOnPage= $this->getDatabase()->getManager(ArticleManager::class)->findPerPage($firstEnter, $nbrPerPage);
+        $this->render('admin.html.twig', [
+            "postsOnPage"=>$postsOnPage,
+            "nbrPages"=>$nbrPages
+        ]);
     }
 
     /**
@@ -34,19 +39,28 @@ class BackController extends Controller
      */
     public function Post($id)
     {
-        $article= $this->getDatabase()->find(Article::class, $id);
-        $reportComment= $this->getDatabase()->findall(Commentaire::class, ["signale"=>'1', "article_id"=>$id]);
-        $this->render('adminArticle.html.twig', ["article"=>$article, "reportComment"=>$reportComment]);
+        $article= $this->getDatabase()->getManager(ArticleManager::class)->find($id);
+        $reportComment= $this->getDatabase()->getManager(CommentManager::class)->findAll(["signale"=>'1', "article_id"=>$id]);
+        $this->render('adminArticle.html.twig', [
+            "article"=>$article,
+            "reportComment"=>$reportComment
+        ]);
     }
 
+    /**
+     * @param $page
+     */
     public function Comments($page)
     {
         $nbrPerPage=10;
-        $nbrSignalComment=$this->getDatabase()->countComments(Commentaire::class, "1");
+        $nbrSignalComment=$this->getDatabase()->getManager(CommentManager::class)->countComments("1");
         $nbrPages= ceil($nbrSignalComment / $nbrPerPage);
         $firstEnter=($page-1)*$nbrPerPage;
-        $reportComment= $this->getDatabase()->findComment($firstEnter, $nbrPerPage, "1");
-        $this->render('adminComments.html.twig', ["reportComment"=>$reportComment, "nbrPages"=>$nbrPages]);
+        $reportComment= $this->getDatabase()->getManager(CommentManager::class)->findComment($firstEnter, $nbrPerPage, "1");
+        $this->render('adminComments.html.twig', [
+            "reportComment"=>$reportComment,
+            "nbrPages"=>$nbrPages
+        ]);
     }
 
     /**
@@ -57,35 +71,24 @@ class BackController extends Controller
         $erreur=[];
 
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            if (!isset($_POST["titre"]) || empty($_POST["titre"])){
-                $erreur["titre"]= "Veuillez saisir un titre";
-            }
-            if (!isset($_POST["auteur"]) || empty($_POST["auteur"])){
-                $erreur["auteur"]= "Veuillez saisir un auteur";
-            }
-            if (!isset($_POST["article"]) || empty($_POST["article"])){
-                $erreur["article"]= "Veuillez saisir un article";
-            }
-            if (!isset($_POST["ordre"]) || empty($_POST["ordre"])){
-                $erreur["ordre"]= "Veuillez saisir un numero d'article";
-            }
+            $database = new Database();
+            $article = new Article($database);
+            $article->hydrate($_POST);
+            $erreur = $article->valid();
             if (count($erreur)==0){
-                $database = new Database();
-                $article = new Article($database);
-                $article->setTitre($_POST['titre']);
-                $article->setAuteur($_POST['auteur']);
-                $article->setArticle($_POST['article']);
-                $article->setOrdre($_POST['ordre']);
-
-                if ($this->getDatabase()->findall(Article::class, ['ordre' => $article->getOrdre()]) == true) {
-                    $this->getDatabase()->changeOrdre($article->getOrdre(), '+');
+                if ($this->getDatabase()->getManager(ArticleManager::class)->findall(['ordre' => $article->getOrdre()]) == true) {
+                    $this->getDatabase()->getManager(ArticleManager::class)->changeOrdre($article->getOrdre(), '+');
                 }
-                $this->getDatabase()->insert($article);
+                $this->getDatabase()->getManager()->insert($article);
                 $this->redirect('/admin/articles?page=1');
             }
         }
         $route="NewArticle";
-        $this->render('NewPost.html.twig', ["article"=>$_POST, "erreur"=>$erreur, "route"=>$route]);
+        $this->render('NewPost.html.twig', [
+            "article"=>$_POST,
+            "erreur"=>$erreur,
+            "route"=>$route
+        ]);
     }
 
     /**
@@ -93,46 +96,28 @@ class BackController extends Controller
      */
     public function NewUpdatePost($id)
     {
-        $article = $this->getDatabase()->find(Article::class, $id );
+        $article = $this->getDatabase()->getManager(ArticleManager::class)->find($id);
         $erreur=[];
-
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            if (!isset($_POST["titre"]) || empty($_POST["titre"])){
-                $erreur["titre"]= "Veuillez saisir un titre";
-            }
-            if (!isset($_POST["auteur"]) || empty($_POST["auteur"])){
-                $erreur["auteur"]= "Veuillez saisir un auteur";
-            }
-            if (!isset($_POST["article"]) || empty($_POST["article"])){
-                $erreur["article"]= "Veuillez saisir un article";
-            }
-            if (!isset($_POST["ordre"]) || empty($_POST["ordre"])){
-                $erreur["ordre"]= "Veuillez saisir un numero d'article";
-            }
+            $originalArticle= clone $article;
+            $article->hydrate($_POST);
+            $erreur = $article->valid();
             if (count($erreur)==0){
-                $originalArticle= clone $article;
-                $article->setTitre($_POST['titre']);
-                $article->setAuteur($_POST['auteur']);
-                $article->setArticle($_POST['article']);
-                $article->setOrdre($_POST['ordre']);
-
                 if ($article->getOrdre() > $originalArticle->getOrdre()){
-                    $this->getDatabase()->changeOrdreUpdate('-', $originalArticle->getOrdre().'<', '<='.$article->getOrdre());
+                    $this->getDatabase()->getManager(ArticleManager::class)->changeOrdreUpdate('-', $originalArticle->getOrdre().'<', '<='.$article->getOrdre());
                 }elseif ($article->getOrdre() < $originalArticle->getOrdre()) {
-                    $this->getDatabase()->changeOrdreUpdate('+', $originalArticle->getOrdre() . '>', '>=' . $article->getOrdre());
+                    $this->getDatabase()->getManager(ArticleManager::class)->changeOrdreUpdate('+', $originalArticle->getOrdre() . '>', '>=' . $article->getOrdre());
                 }
-                $this->getDatabase()->update($article);
+                $this->getDatabase()->getManager()->update($article);
                 $this->redirect('/admin/articles?page=1');
             }
-            $article->setTitre($_POST['titre']);
-            $article->setAuteur($_POST['auteur']);
-            $article->setArticle($_POST['article']);
-            $article->setOrdre($_POST['ordre']);
-            $route="NewUpdateArticle/".$id;
-            $this->render('NewPost.html.twig', ["article"=>$article, "erreur"=>$erreur, "route"=>$route]);
         }
         $route="NewUpdateArticle/".$id;
-        $this->render('NewPost.html.twig', ["article"=>$article, "erreur"=>$erreur, "route"=>$route]);
+        $this->render('NewPost.html.twig', [
+            "article"=>$article,
+            "erreur"=>$erreur,
+            "route"=>$route
+        ]);
     }
 
     /**
@@ -140,9 +125,8 @@ class BackController extends Controller
      */
     public function DeletePost($id)
     {
-        $database= new Database();
-        $article= $database->find(Article::class, $id);
-        $database->delete($article);
+        $article= $this->getDatabase()->getManager(ArticleManager::class)->find($id);
+        $this->getDatabase()->getManager()->delete($article);
         $this->redirect('/admin/articles?page=1');
     }
 
@@ -151,12 +135,24 @@ class BackController extends Controller
      */
     public function DeleteComment($id)
     {
-        $database= new Database();
-        $comment= $database->find(Commentaire::class, $id);
-        $database->delete($comment);
+        $comment= $this->getDatabase()->getManager(CommentManager::class)->find($id);
+        $this->getDatabase()->getManager()->delete($comment);
         $this->redirect('/admin/article/'.$comment->getArticleId());
     }
 
+    /**
+     * @param $id
+     */
+    public function DeleteCommentPage($id)
+    {
+        $comment= $this->getDatabase()->getManager(CommentManager::class)->find($id);
+        $this->getDatabase()->getManager()->delete($comment);
+        $this->redirect('/admin/comments?page=1');
+    }
+
+    /**
+     *
+     */
     public function LogOut ()
     {
         session_start();

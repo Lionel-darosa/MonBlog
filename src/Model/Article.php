@@ -8,48 +8,71 @@
 
 namespace Model;
 
+use Lib\Entity;
+use Manager\CommentManager;
+
 class Article extends Entity
 {
-    public $fields = [
-        "id"=>"pk",
-        "titre"=>"",
-        "article"=>"",
-        "ordre"=>"",
-        "auteur"=>"",
-        "date_article"=>"default"
+    public $metadata = [
+        "table" => "article",
+        "primary_key" => "id",
+        "columns" => [
+            "id" => [
+                "required" => false
+            ],
+            "titre" => [
+                "required" => true,
+                "message" => "Veuillez saisir le titre de l'article"
+            ],
+            "article" => [
+                "required" => true,
+                "message" => "Veuillez saisir le contenu de l'article"
+            ],
+            "ordre" => [
+                "required" => true,
+                "message" => "Veuillez saisir l'ordre de l'article"
+            ],
+            "auteur" => [
+                "required" => true,
+                "message" => "Veuillez saisir l'auteur de l'article"
+            ],
+            "date_article" => [
+                "required" => false
+            ]
+        ]
     ];
 
     /**
      * @var int
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      */
-    private $titre;
+    protected $titre;
 
     /**
      * @var string
      */
-    private $article;
+    protected $article;
 
     /**
      * @var int
      */
-    private $ordre;
+    protected $ordre;
 
     /**
      * @var string
      */
-    private $auteur;
+    protected $auteur;
 
-    private $commentaires;
+    protected $commentaires;
 
     /**
      * @var \DateTime
      */
-    private $date_article;
+    protected $date_article;
 
     public static function getTable()
     {
@@ -59,7 +82,8 @@ class Article extends Entity
     public function getCommentaires()
     {
         if($this->commentaires === null) {
-            $this->commentaires = $this->database->findAll(Commentaire::class, ["article_id" => $this->id]);
+
+            $this->commentaires = $this->database->getManager(CommentManager::class)->findAll(["article_id" => $this->id]);
         }
         return $this->commentaires;
     }
@@ -123,4 +147,6 @@ class Article extends Entity
     {
         return $this->$name;
     }
+
+
 }

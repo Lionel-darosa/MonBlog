@@ -8,46 +8,65 @@
 
 namespace Model;
 
+use Lib\Entity;
+
 class Commentaire extends Entity
 {
-    public $fields = [
-        "id"=>"pk",
-        "pseudo"=>"",
-        "commentaire"=>"",
-        "article_id"=>"",
-        "signale"=>"",
-        "date_Comment"=>"default"
-
+    public $metadata = [
+        "table" => "commentaire",
+        "primary_key" => "id",
+        "columns" => [
+            "id" => [
+                "required" => false
+            ],
+            "pseudo" => [
+                "required" => true,
+                "message" => "Veuillez saisir un pseudo"
+            ],
+            "commentaire" => [
+                "required" => true,
+                "message" => "Veuillez saisir un commentaire"
+            ],
+            "article_id" => [
+                "required" => true
+            ],
+            "signale" => [
+                "required" => true
+            ],
+            "date_Comment" => [
+                "required" => false
+            ]
+        ]
     ];
 
     /**
      * @var int
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      */
-    private $pseudo;
+    protected $pseudo;
 
     /**
      * @var string
      */
-    private $commentaire;
+    protected $commentaire;
 
     /**
      * @var int
      */
-    private $article_id;
+    protected $article_id;
 
     /**
      * @var boolean
      */
-    private $signale;
+    protected $signale;
 
-    private $date_Comment;
+    protected $date_Comment;
 
-    private $article;
+    protected $article;
 
     /**
      * @return bool

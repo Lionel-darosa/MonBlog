@@ -9,7 +9,7 @@
 namespace Lib;
 
 
-use Model\Database;
+
 
 abstract class Controller
 {

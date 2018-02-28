@@ -11,11 +11,11 @@ namespace Controller;
 
 use Lib\Collection;
 use Lib\Controller;
-use Model\Database;
+use Lib\Database;
 use Model\Article;
 use Model\Commentaire;
-
-
+use Manager\ArticleManager;
+use Manager\CommentManager;
 
 class FrontController extends Controller
 {
@@ -24,61 +24,69 @@ class FrontController extends Controller
      */
     public function Accueil()
     {
-        $postsOnPage= $this->getDatabase()->findPerPage(Article::class, 0, 5);
-        $lastPost= $this->getDatabase()->findLast(Article::class);
-        $this->render('index.html.twig', ["postsOnPage"=>$postsOnPage, "lastPost"=>$lastPost]);
+        $postsOnPage= $this->getDatabase()->getManager(ArticleManager::class)->findPerPage(0, 5);
+        $lastPost= $this->getDatabase()->getManager(ArticleManager::class)->findLast();
+        $this->render('index.html.twig', [
+            "postsOnPage"=>$postsOnPage,
+            "lastPost"=>$lastPost
+        ]);
     }
 
+    /**
+     * @param $page
+     */
     public function Posts($page)
     {
         $nbrPerPage=5;
-        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
+        $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
         $nbrPages= ceil($nbrArticles / $nbrPerPage);
         $firstEnter=($page-1)*$nbrPerPage;
-        $postsOnPage= $this->getDatabase()->findPerPage(Article::class, $firstEnter, $nbrPerPage);
-        $this->render('articles.html.twig', ["postsOnPage"=>$postsOnPage, "nbrPages"=>$nbrPages]);
+        $postsOnPage= $this->getDatabase()->getManager(ArticleManager::class)->findPerPage($firstEnter, $nbrPerPage);
+        $this->render('articles.html.twig', [
+            "postsOnPage"=>$postsOnPage,
+            "nbrPages"=>$nbrPages
+        ]);
     }
-
 
     /**
      * @param $id
      */
     public function Post($id)
     {
-        $article= $this->getDatabase()->find(Article::class,$id);
-        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
+        $article= $this->getDatabase()->getManager(ArticleManager::class)->find($id);
+        $erreur=[];
+        $database= new Database();
+        $newComment = new Commentaire($database);
+        if ($_SERVER["REQUEST_METHOD"]=="POST"){
+            $newComment->setArticleId($id);
+            $newComment->setSignale('0');
+            $newComment->hydrate($_POST);
+            $erreur = $newComment->valid();
+            if (count($erreur)==0){
+                $this->getDatabase()->getManager()->insert($newComment);
+                $this->redirect('/article/'.$id.'?page=1');
+            }
+        }
+        $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
         $ordre= $article->getOrdre();
-        $lastPost= $this->getDatabase()->findMinMax(Article::class, "MAX(ordre)");
-        $firstPost= $this->getDatabase()->findMinMax(Article::class, "MIN(ordre)");
-        if ($ordre < $lastPost['0'])
-        {
-            $articleSuivant=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordreSuivant=$ordre+1]);
-            while ($articleSuivant==null)
-            {
-                $articleSuivant=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordreSuivant=$ordreSuivant+1]);
-            }
-            $articleSuivant=$articleSuivant['0']->getId();
-        }else{
-            $articleSuivant='0';
-        }
-        if ($ordre>$firstPost['0'])
-        {
-            $articlePrecedent=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordrePrecedent=$ordre-1]);
-            while ($articlePrecedent==null)
-            {
-                $articlePrecedent=$this->getDatabase()->findAll(Article::class, ["ordre"=>$ordrePrecedent=$ordrePrecedent-1]);
-            }
-            $articlePrecedent=$articlePrecedent['0']->getId();
-        }else{
-            $articlePrecedent='0';
-            ;
-        }
+        $lastPost= $this->getDatabase()->getManager(ArticleManager::class)->findMinMax("MAX(ordre)");
+        $firstPost= $this->getDatabase()->getManager(ArticleManager::class)->findMinMax("MIN(ordre)");
+        $nextAndPrevious= $this->getDatabase()->getManager(ArticleManager::class)->nextPreviousPost($ordre, $firstPost, $lastPost);
         $nbrPerPage=5;
-        $nbrComments=$this->getDatabase()->countCommentsArticle(Commentaire::class, $id);
+        $nbrComments=$this->getDatabase()->getManager(CommentManager::class)->countCommentsArticle($id);
         $nbrPages= ceil($nbrComments/$nbrPerPage);
         $firstEnter= ($_GET["page"]-1)*$nbrPerPage;
-        $CommentsOnPage= $this->getDatabase()->findPerPageDesc(Commentaire::class, $firstEnter, $nbrPerPage, $id);
-        $this->render('article.html.twig', ["article"=>$article, "nbrArticles"=>$nbrArticles, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages, "articleSuivant"=>$articleSuivant, "articlePrecedent"=>$articlePrecedent, "lastPost"=>$lastPost['0']]);
+        $CommentsOnPage= $this->getDatabase()->getManager(CommentManager::class)->findPerPageDesc($firstEnter, $nbrPerPage, $id);
+        $this->render('article.html.twig', [
+            "article"=>$article,
+            "erreur"=>$erreur,
+            "newComment"=>$newComment,
+            "nbrArticles"=>$nbrArticles,
+            "CommentOnPage"=>$CommentsOnPage,
+            "nbrPages"=>$nbrPages,
+            "nextAndPrevious"=>$nextAndPrevious,
+            "lastPost"=>$lastPost['0']
+        ]);
     }
 
     /**
@@ -89,48 +97,11 @@ class FrontController extends Controller
         $this->render('about.html.twig', array());
     }
 
-    public function Contact()
-    {
-        $this->render('contact.html.twig', array());
-    }
-
-    /**
-     * @param $id
-     */
-    public function AddComment($id)
-    {
-        if (!empty($_POST['pseudo']) && !empty($_POST['commentaire'])){
-            $database= new Database();
-            $newComment = new Commentaire($database);
-            $newComment->setPseudo($_POST['pseudo']);
-            $newComment->setCommentaire($_POST['commentaire']);
-            $newComment->setArticleId($id);
-            $newComment->setSignale('0');
-            $this->getDatabase()->insert($newComment);
-            $this->redirect('/article/'.$id.'?page=1');
-        }elseif (empty($_POST['pseudo']) && empty($_POST['commentaire'])){
-            $message='Veuillez entrer un pseudo et un commentaire';
-
-        }elseif (empty($_POST['pseudo']) && !empty($_POST['commentaire'])){
-            $message='Veuillez entrer un pseudo';
-        }elseif (!empty($_POST['pseudo']) && empty($_POST['commentaire'])){
-            $message='Veuillez entrer un commentaire';
-        }
-        $article= $this->getDatabase()->find(Article::class, $id);
-        $nbrPerPage=5;
-        $nbrComments=$this->getDatabase()->countCommentsArticle(Commentaire::class, $id);
-        $nbrPages= ceil($nbrComments/$nbrPerPage);
-        $firstEnter= '0';
-        $CommentsOnPage= $this->getDatabase()->findPerPageDesc(Commentaire::class, $firstEnter, $nbrPerPage, $id);
-        $nbrArticles=$this->getDatabase()->countPosts(Article::class);
-        $this->render('article.html.twig', ["article"=>$article, "nbrArticles"=>$nbrArticles, "CommentOnPage"=>$CommentsOnPage, "nbrPages"=>$nbrPages, "message"=>$message]);
-    }
-
     public function Signal($id)
     {
-        $comment= $this->getDatabase()->find(Commentaire::class, $id);
+        $comment= $this->getDatabase()->getManager(CommentManager::class)->find($id);
         $comment->setSignale('1');
-        $this->getDatabase()->update($comment);
+        $this->getDatabase()->getManager()->update($comment);
         $this->redirect('/article/'.$comment->getArticleId().'?page='.$_GET["page"].'#commentaires');
     }
 
