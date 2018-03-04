@@ -67,15 +67,6 @@ class Collection implements \Countable, \Iterator
      */
     public function filter($callback)
     {
-        /* Alternative
-            $newData = [];
-            foreach($this->data as $data) {
-                if($callback($data)) {
-                    $newData[] = $data;
-                }
-            }
-            return new Collection($newData);
-        */
         return new Collection(array_values(array_filter($this->data, $callback)));
     }
 

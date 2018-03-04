@@ -28,8 +28,7 @@ abstract class Controller
      */
     public function getDatabase()
     {
-        if ($this->database===null)
-        {
+        if ($this->database===null) {
             $this->database= new Database();
         }
         return $this->database;

@@ -9,6 +9,7 @@
 namespace Lib;
 
 use Lib\Collection;
+
 class Router
 {
     private $routeCollection;
@@ -35,12 +36,12 @@ class Router
      */
     public function match($requestUri)
     {
-        $routeCollection=$this->routeCollection->filter(function (Route $route ) use ($requestUri){
+        $routeCollection=$this->routeCollection->filter(function (Route $route ) use ($requestUri) {
             return $route->match($requestUri);
         });
-        if ($routeCollection->count()){
+        if ($routeCollection->count()) {
             return $routeCollection->first();
-        }else{
+        } else {
             return null;
         }
     }

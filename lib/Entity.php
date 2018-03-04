@@ -27,7 +27,7 @@ abstract class Entity
     public function valid()
     {
         $errors = [];
-        foreach($this->metadata["columns"] as $column => $validation){
+        foreach($this->metadata["columns"] as $column => $validation) {
             if($validation["required"] && $this->{$column} == "") {
                 $errors[$column] = $validation["message"];
             }

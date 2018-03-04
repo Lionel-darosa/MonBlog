@@ -69,11 +69,12 @@ class BackController extends Controller
     public function NewPost()
     {
         $erreur=[];
+        $database = new Database();
+        $article = new Article($database);
 
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            $database = new Database();
-            $article = new Article($database);
-            $article->hydrate($_POST);
+            $myInputs = $this->getDatabase()->getManager(ArticleManager::class)->postFilter($_POST);
+            $article->hydrate($myInputs);
             $erreur = $article->valid();
             if (count($erreur)==0){
                 if ($this->getDatabase()->getManager(ArticleManager::class)->findall(['ordre' => $article->getOrdre()]) == true) {
@@ -85,7 +86,7 @@ class BackController extends Controller
         }
         $route="NewArticle";
         $this->render('NewPost.html.twig', [
-            "article"=>$_POST,
+            "article"=>$article,
             "erreur"=>$erreur,
             "route"=>$route
         ]);
@@ -99,8 +100,9 @@ class BackController extends Controller
         $article = $this->getDatabase()->getManager(ArticleManager::class)->find($id);
         $erreur=[];
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
+            $myInputs = $this->getDatabase()->getManager(ArticleManager::class)->postFilter($_POST);
             $originalArticle= clone $article;
-            $article->hydrate($_POST);
+            $article->hydrate($myInputs);
             $erreur = $article->valid();
             if (count($erreur)==0){
                 if ($article->getOrdre() > $originalArticle->getOrdre()){

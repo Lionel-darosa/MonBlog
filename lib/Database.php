@@ -36,10 +36,8 @@ class Database
     public function getManager($class = null)
     {
         $class = $class ?? Manager::class;
-
-        $instancesManager[$class] = $instancesManager[$class] ?? new $class($this);
-
-        return $instancesManager[$class];
+        $this->instancesManager[$class] = $this->instancesManager[$class] ?? new $class($this);
+        return $this->instancesManager[$class];
     }
 
     /**

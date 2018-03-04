@@ -10,6 +10,7 @@ namespace Manager;
 
 use Model\Commentaire;
 use Lib\Manager;
+use Lib\Controller;
 
 class CommentManager extends Manager
 {
@@ -59,5 +60,30 @@ class CommentManager extends Manager
         $req=$this->database->query(sprintf("SELECT COUNT(*) AS content FROM commentaires WHERE signale=%s", $signale));
         $total= $req->fetch();
         return $total['content'];
+    }
+
+    /**
+     * @param $object
+     * @param $newComment
+     * @param $id
+     * @return mixed
+     */
+    public function filterComment($object, $newComment, $id)
+    {
+        $args = array(
+            'pseudo' => FILTER_SANITIZE_SPECIAL_CHARS,
+            'commentaire' => FILTER_SANITIZE_SPECIAL_CHARS
+        );
+
+        $myInput = filter_var_array($object, $args);
+        $newComment->hydrate($myInput);
+        $formData['newComment'] = $newComment;
+        $formData['erreur'] = $newComment->valid();
+        if (count($formData['erreur'])==0){
+            $this->insert($formData['newComment']);
+            Controller::redirect('/article/'.$id.'?page=1');
+        }
+        return $formData;
+
     }
 }

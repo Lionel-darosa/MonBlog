@@ -54,18 +54,16 @@ class FrontController extends Controller
     public function Post($id)
     {
         $article= $this->getDatabase()->getManager(ArticleManager::class)->find($id);
-        $erreur=[];
         $database= new Database();
         $newComment = new Commentaire($database);
+        $newComment->setArticleId($id);
+        $newComment->setSignale('0');
+        $myInputs=[
+            'newComment'=>'',
+            'erreur'=>''
+        ];
         if ($_SERVER["REQUEST_METHOD"]=="POST"){
-            $newComment->setArticleId($id);
-            $newComment->setSignale('0');
-            $newComment->hydrate($_POST);
-            $erreur = $newComment->valid();
-            if (count($erreur)==0){
-                $this->getDatabase()->getManager()->insert($newComment);
-                $this->redirect('/article/'.$id.'?page=1');
-            }
+            $myInputs = $this->getDatabase()->getManager(CommentManager::class)->filterComment($_POST, $newComment, $id);
         }
         $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
         $ordre= $article->getOrdre();
@@ -79,8 +77,8 @@ class FrontController extends Controller
         $CommentsOnPage= $this->getDatabase()->getManager(CommentManager::class)->findPerPageDesc($firstEnter, $nbrPerPage, $id);
         $this->render('article.html.twig', [
             "article"=>$article,
-            "erreur"=>$erreur,
-            "newComment"=>$newComment,
+            "erreur"=>$myInputs['erreur'],
+            "newComment"=>$myInputs['newComment'],
             "nbrArticles"=>$nbrArticles,
             "CommentOnPage"=>$CommentsOnPage,
             "nbrPages"=>$nbrPages,
@@ -115,15 +113,18 @@ class FrontController extends Controller
 
     public function LogInControl()
     {
-        if (empty($_POST['Id']) && empty($_POST['Pass'])){
+        $myInputs=[];
+        if ($_SERVER["REQUEST_METHOD"]=="POST") {
+            $myInputs = $this->getDatabase()->getManager()->logInFilter($_POST);
+        }
+        if (empty($myInputs['Id']) && empty($myInputs['Pass'])){
             $message='Veuillez rentrer un identifiant et un mot de passe';
             $this->render('connect.html.twig', ['message'=>$message]);
-        }else if (isset($_POST['Id']) && isset($_POST['Pass'])) {
+        }else if (isset($myInputs['Id']) && isset($myInputs['Pass'])) {
 
-            if ($_POST['Id'] === 'admin' && $_POST['Pass'] === '1234') {
+            if ($myInputs['Id'] === 'admin' && $myInputs['Pass'] === '1234') {
                 session_start();
-                $_SESSION['Id']= $_POST['Id'];
-                var_dump($_SESSION['Id']);
+                $_SESSION['Id']= $myInputs['Id'];
                 $this->redirect('/admin/articles?page=1');
             } else {
                 $message = 'Vos identifiant et mots de passe ne sont pas correct';

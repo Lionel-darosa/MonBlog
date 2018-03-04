@@ -11,7 +11,6 @@ namespace Lib;
 class Route
 {
 
-
     private $name;
 
     private $path;
@@ -22,12 +21,15 @@ class Route
 
     private $session;
 
-    private $parameters=array();
-
-
-
-
-    public function __construct($name, $path,  $controller, $action, $session)
+    /**
+     * Route constructor.
+     * @param $name
+     * @param $path
+     * @param $controller
+     * @param $action
+     * @param $session
+     */
+    public function __construct($name, $path, $controller, $action, $session)
     {
         $this->name=$name;
         $this->path=$path;
@@ -35,7 +37,6 @@ class Route
         $this->action=$action;
         $this->session=$session;
     }
-
 
     /**
      * @return mixed
@@ -68,8 +69,6 @@ class Route
     {
         $this->path = $path;
     }
-
-
 
     /**
      * @return mixed
@@ -118,8 +117,8 @@ class Route
     public function call($requestUri)
     {
         session_start();
-        if ($this->getSession() == '1'){
-            if (!isset($_SESSION['Id'])){
+        if ($this->getSession() == '1') {
+            if (!isset($_SESSION['Id'])) {
                 header('Location: http://monblog.test/LogIn');
             }
         }
@@ -127,7 +126,6 @@ class Route
         $controller= $this->getcontroller();
         $controller= new $controller();
         call_user_func_array(array($controller, $this->getAction()), isset($matches[1]) ? $matches[1] : []);
-
     }
 
     /**
@@ -145,6 +143,4 @@ class Route
     {
         $this->session = $session;
     }
-
-
 }
