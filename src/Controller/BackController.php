@@ -73,7 +73,16 @@ class BackController extends Controller
         $article = new Article($database);
 
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            $myInputs = $this->getDatabase()->getManager(ArticleManager::class)->postFilter($_POST);
+            $args = array(
+                'titre' => FILTER_SANITIZE_SPECIAL_CHARS,
+                'article' => FILTER_UNSAFE_RAW,
+                'ordre' => array(
+                    'filter' => FILTER_SANITIZE_NUMBER_INT,
+                    'options' => array('min_range' => 0)
+                ),
+                'auteur' => FILTER_SANITIZE_SPECIAL_CHARS
+            );
+            $myInputs = filter_var_array($_POST, $args);
             $article->hydrate($myInputs);
             $erreur = $article->valid();
             if (count($erreur)==0){
@@ -100,7 +109,16 @@ class BackController extends Controller
         $article = $this->getDatabase()->getManager(ArticleManager::class)->find($id);
         $erreur=[];
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            $myInputs = $this->getDatabase()->getManager(ArticleManager::class)->postFilter($_POST);
+            $args = array(
+                'titre' => FILTER_SANITIZE_SPECIAL_CHARS,
+                'article' => FILTER_UNSAFE_RAW,
+                'ordre' => array(
+                    'filter' => FILTER_SANITIZE_NUMBER_INT,
+                    'options' => array('min_range' => 0)
+                ),
+                'auteur' => FILTER_SANITIZE_SPECIAL_CHARS
+            );
+            $myInputs = filter_var_array($_POST, $args);
             $originalArticle= clone $article;
             $article->hydrate($myInputs);
             $erreur = $article->valid();

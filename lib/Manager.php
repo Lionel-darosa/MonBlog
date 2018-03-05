@@ -62,15 +62,4 @@ class Manager
         }
         $this->database->execute(sprintf("INSERT INTO %s SET %s", $object::getTable(), implode(",", $columns)));
     }
-
-    public function logInFilter($object)
-    {
-        $args = array(
-            'Id' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'Pass' => FILTER_SANITIZE_SPECIAL_CHARS
-        );
-
-        return $myInput = filter_var_array($object, $args);
-    }
-
 }

@@ -56,14 +56,17 @@ class FrontController extends Controller
         $article= $this->getDatabase()->getManager(ArticleManager::class)->find($id);
         $database= new Database();
         $newComment = new Commentaire($database);
-        $newComment->setArticleId($id);
-        $newComment->setSignale('0');
-        $myInputs=[
+        $commentData=[
             'newComment'=>'',
             'erreur'=>''
         ];
         if ($_SERVER["REQUEST_METHOD"]=="POST"){
-            $myInputs = $this->getDatabase()->getManager(CommentManager::class)->filterComment($_POST, $newComment, $id);
+            $args = array(
+                'pseudo' => FILTER_SANITIZE_SPECIAL_CHARS,
+                'commentaire' => FILTER_SANITIZE_SPECIAL_CHARS
+            );
+            $myInput = filter_var_array($_POST, $args);
+            $commentData = $this->getDatabase()->getManager(CommentManager::class)->filterComment($myInput, $newComment, $id);
         }
         $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
         $ordre= $article->getOrdre();
@@ -77,8 +80,8 @@ class FrontController extends Controller
         $CommentsOnPage= $this->getDatabase()->getManager(CommentManager::class)->findPerPageDesc($firstEnter, $nbrPerPage, $id);
         $this->render('article.html.twig', [
             "article"=>$article,
-            "erreur"=>$myInputs['erreur'],
-            "newComment"=>$myInputs['newComment'],
+            "erreur"=>$commentData['erreur'],
+            "newComment"=>$commentData['newComment'],
             "nbrArticles"=>$nbrArticles,
             "CommentOnPage"=>$CommentsOnPage,
             "nbrPages"=>$nbrPages,
@@ -115,7 +118,11 @@ class FrontController extends Controller
     {
         $myInputs=[];
         if ($_SERVER["REQUEST_METHOD"]=="POST") {
-            $myInputs = $this->getDatabase()->getManager()->logInFilter($_POST);
+            $args = array(
+                'Id' => FILTER_SANITIZE_SPECIAL_CHARS,
+                'Pass' => FILTER_SANITIZE_SPECIAL_CHARS
+            );
+            $myInputs = filter_var_array($_POST, $args);
         }
         if (empty($myInputs['Id']) && empty($myInputs['Pass'])){
             $message='Veuillez rentrer un identifiant et un mot de passe';

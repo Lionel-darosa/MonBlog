@@ -116,20 +116,4 @@ class ArticleManager extends Manager
         }
         return $nextPrevious;
     }
-
-    public function postFilter($object)
-    {
-        $args = array(
-            'titre' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'article' => FILTER_UNSAFE_RAW,
-            'ordre' => array(
-                'filter' => FILTER_SANITIZE_NUMBER_INT,
-                'options' => array('min_range' => 0)
-            ),
-            'auteur' => FILTER_SANITIZE_SPECIAL_CHARS
-        );
-
-        return $myInput = filter_var_array($object, $args);
-    }
-
 }

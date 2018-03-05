@@ -70,13 +70,9 @@ class CommentManager extends Manager
      */
     public function filterComment($object, $newComment, $id)
     {
-        $args = array(
-            'pseudo' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'commentaire' => FILTER_SANITIZE_SPECIAL_CHARS
-        );
-
-        $myInput = filter_var_array($object, $args);
-        $newComment->hydrate($myInput);
+        $newComment->setArticleId($id);
+        $newComment->setSignale('0');
+        $newComment->hydrate($object);
         $formData['newComment'] = $newComment;
         $formData['erreur'] = $newComment->valid();
         if (count($formData['erreur'])==0){
@@ -84,6 +80,5 @@ class CommentManager extends Manager
             Controller::redirect('/article/'.$id.'?page=1');
         }
         return $formData;
-
     }
 }
