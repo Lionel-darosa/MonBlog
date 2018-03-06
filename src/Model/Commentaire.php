@@ -85,16 +85,25 @@ class Commentaire extends Entity
     }
 
 
+    /**
+     * @return string
+     */
     public static function getTable()
     {
         return "commentaires";
     }
 
+    /**
+     * @return int
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @return mixed
+     */
     public function getArticle()
     {
         if($this->article === null) {
@@ -103,46 +112,74 @@ class Commentaire extends Entity
         return $this->article;
     }
 
+    /**
+     * @return int
+     */
     public function getArticleId()
     {
         return $this->article_id;
     }
 
+    /**
+     * @param $articleId
+     */
     public function setArticleId($articleId)
     {
         $this->article_id = $articleId;
     }
 
+    /**
+     * @return string
+     */
     public function getPseudo()
     {
         return $this->pseudo;
     }
 
+    /**
+     * @param $pseudo
+     */
     public function setPseudo($pseudo)
     {
         $this->pseudo = $pseudo;
     }
 
+    /**
+     * @return string
+     */
     public function getCommentaire()
     {
         return $this->commentaire;
     }
 
+    /**
+     * @param $commentaire
+     */
     public function setCommentaire($commentaire)
     {
         $this->commentaire = $commentaire;
     }
 
+    /**
+     * @return bool|\DateTime
+     */
     public function getDate_Comment()
     {
         return \DateTime::createFromFormat("Y-m-d H:i:s", $this->date_Comment);
     }
 
+    /**
+     * @param $date_Comment
+     */
     public function setDate_Comment($date_Comment)
     {
         $this->date_Comment = $date_Comment->format("Y-m-d H:i:s");
     }
 
+    /**
+     * @param $name
+     * @return mixed
+     */
     public function __get($name)
     {
         return $this->$name;

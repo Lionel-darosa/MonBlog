@@ -14,11 +14,19 @@ class Manager
 
     protected $class="";
 
+    /**
+     * Manager constructor.
+     * @param Database $database
+     */
     public function __construct(Database &$database)
     {
         $this->database = $database;
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function find($id)
     {
         $statement = $this->database->query(sprintf("SELECT * FROM %s WHERE id=%s", $this->class::getTable(), $id));
@@ -26,6 +34,10 @@ class Manager
         return $statement->fetch();
     }
 
+    /**
+     * @param array $criteria
+     * @return array
+     */
     public function findAll($criteria = [])
     {
         return $this->database->query(sprintf("SELECT * FROM %s WHERE %s", $this->class::getTable(), implode(" AND ", array_map(function($criterion, $value) {
@@ -33,17 +45,21 @@ class Manager
         }, array_keys($criteria), $criteria))))->fetchAll(\PDO::FETCH_CLASS, $this->class, ["database" => &$this->database]);
     }
 
-
-
+    /**
+     * @param $object
+     */
     public function delete($object)
     {
         $this->database->execute(sprintf("DELETE  FROM %s WHERE id=%s", $object::getTable(), $object->getId()));
     }
 
+    /**
+     * @param $object
+     */
     public function update($object)
     {
         $columns = [];
-        foreach($object->metadata["columns"] as $field=>$option) {
+        foreach ($object->metadata["columns"] as $field=>$option) {
             if ($option["required"]) {
                 $columns[] = $field . " = " . "'" . str_replace("'", "''", $object->__get($field)) . "'";
             }
@@ -52,11 +68,14 @@ class Manager
 
     }
 
+    /**
+     * @param $object
+     */
     public function insert($object)
     {
         $columns = [];
-        foreach($object->metadata["columns"] as $field=>$option) {
-            if($option["required"]) {
+        foreach ($object->metadata["columns"] as $field=>$option) {
+            if ($option["required"]) {
                 $columns[] = $field . " = " . "'" . str_replace("'", "''", $object->__get($field)) . "'";
             }
         }

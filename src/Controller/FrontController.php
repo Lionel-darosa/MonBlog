@@ -8,11 +8,8 @@
 
 namespace Controller;
 
-
-use Lib\Collection;
 use Lib\Controller;
 use Lib\Database;
-use Model\Article;
 use Model\Commentaire;
 use Manager\ArticleManager;
 use Manager\CommentManager;
@@ -22,36 +19,40 @@ class FrontController extends Controller
     /**
      *
      */
-    public function Accueil()
+    public function accueil()
     {
         $postsOnPage= $this->getDatabase()->getManager(ArticleManager::class)->findPerPage(0, 5);
         $lastPost= $this->getDatabase()->getManager(ArticleManager::class)->findLast();
-        $this->render('index.html.twig', [
-            "postsOnPage"=>$postsOnPage,
-            "lastPost"=>$lastPost
-        ]);
+        $this->render(
+            'index.html.twig', [
+                "postsOnPage"=>$postsOnPage,
+                "lastPost"=>$lastPost
+            ]
+        );
     }
 
     /**
      * @param $page
      */
-    public function Posts($page)
+    public function posts($page)
     {
         $nbrPerPage=5;
         $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
         $nbrPages= ceil($nbrArticles / $nbrPerPage);
         $firstEnter=($page-1)*$nbrPerPage;
         $postsOnPage= $this->getDatabase()->getManager(ArticleManager::class)->findPerPage($firstEnter, $nbrPerPage);
-        $this->render('articles.html.twig', [
-            "postsOnPage"=>$postsOnPage,
-            "nbrPages"=>$nbrPages
-        ]);
+        $this->render(
+            'articles.html.twig', [
+                "postsOnPage"=>$postsOnPage,
+                "nbrPages"=>$nbrPages
+            ]
+        );
     }
 
     /**
      * @param $id
      */
-    public function Post($id)
+    public function post($id)
     {
         $article= $this->getDatabase()->getManager(ArticleManager::class)->find($id);
         $database= new Database();
@@ -60,13 +61,13 @@ class FrontController extends Controller
             'newComment'=>'',
             'erreur'=>''
         ];
-        if ($_SERVER["REQUEST_METHOD"]=="POST"){
+        if ($_SERVER["REQUEST_METHOD"]=="POST") {
             $args = array(
                 'pseudo' => FILTER_SANITIZE_SPECIAL_CHARS,
                 'commentaire' => FILTER_SANITIZE_SPECIAL_CHARS
             );
             $myInput = filter_var_array($_POST, $args);
-            $commentData = $this->getDatabase()->getManager(CommentManager::class)->filterComment($myInput, $newComment, $id);
+            $commentData = $this->getDatabase()->getManager(CommentManager::class)->formDataComment($myInput, $newComment, $id);
         }
         $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
         $ordre= $article->getOrdre();
@@ -78,27 +79,32 @@ class FrontController extends Controller
         $nbrPages= ceil($nbrComments/$nbrPerPage);
         $firstEnter= ($_GET["page"]-1)*$nbrPerPage;
         $CommentsOnPage= $this->getDatabase()->getManager(CommentManager::class)->findPerPageDesc($firstEnter, $nbrPerPage, $id);
-        $this->render('article.html.twig', [
-            "article"=>$article,
-            "erreur"=>$commentData['erreur'],
-            "newComment"=>$commentData['newComment'],
-            "nbrArticles"=>$nbrArticles,
-            "CommentOnPage"=>$CommentsOnPage,
-            "nbrPages"=>$nbrPages,
-            "nextAndPrevious"=>$nextAndPrevious,
-            "lastPost"=>$lastPost['0']
-        ]);
+        $this->render(
+            'article.html.twig', [
+                "article"=>$article,
+                "erreur"=>$commentData['erreur'],
+                "newComment"=>$commentData['newComment'],
+                "nbrArticles"=>$nbrArticles,
+                "CommentOnPage"=>$CommentsOnPage,
+                "nbrPages"=>$nbrPages,
+                "nextAndPrevious"=>$nextAndPrevious,
+                "lastPost"=>$lastPost['0']
+            ]
+        );
     }
 
     /**
      *
      */
-    public function About()
+    public function about()
     {
         $this->render('about.html.twig', array());
     }
 
-    public function Signal($id)
+    /**
+     * @param $id
+     */
+    public function signal($id)
     {
         $comment= $this->getDatabase()->getManager(CommentManager::class)->find($id);
         $comment->setSignale('1');
@@ -109,12 +115,15 @@ class FrontController extends Controller
     /**
      *
      */
-    public function LogIn()
+    public function logIn()
     {
         $this->render('connect.html.twig', array());
     }
 
-    public function LogInControl()
+    /**
+     *
+     */
+    public function logInControl()
     {
         $myInputs=[];
         if ($_SERVER["REQUEST_METHOD"]=="POST") {
@@ -124,11 +133,10 @@ class FrontController extends Controller
             );
             $myInputs = filter_var_array($_POST, $args);
         }
-        if (empty($myInputs['Id']) && empty($myInputs['Pass'])){
+        if (empty($myInputs['Id']) && empty($myInputs['Pass'])) {
             $message='Veuillez rentrer un identifiant et un mot de passe';
             $this->render('connect.html.twig', ['message'=>$message]);
-        }else if (isset($myInputs['Id']) && isset($myInputs['Pass'])) {
-
+        } else if (isset($myInputs['Id']) && isset($myInputs['Pass'])) {
             if ($myInputs['Id'] === 'admin' && $myInputs['Pass'] === '1234') {
                 session_start();
                 $_SESSION['Id']= $myInputs['Id'];

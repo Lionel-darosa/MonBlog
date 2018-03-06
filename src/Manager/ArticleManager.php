@@ -104,14 +104,13 @@ class ArticleManager extends Manager
         if ($ordre < $lastPost['0']) {
             $suivant=$this->nextPost($ordre);
             $nextPrevious["next"]= $suivant['0']->getId();
-        }else{
+        } else {
             $nextPrevious["next"]='0';
         }
-        if ($ordre>$firstPost['0'])
-        {
+        if ($ordre>$firstPost['0']) {
             $precedent=$this->previousPost($ordre);
             $nextPrevious["previous"]= $precedent['0']->getId();
-        }else{
+        } else {
             $nextPrevious["previous"]='0';
         }
         return $nextPrevious;

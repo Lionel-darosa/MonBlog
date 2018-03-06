@@ -10,7 +10,6 @@ namespace Lib;
 
 class Route
 {
-
     private $name;
 
     private $path;

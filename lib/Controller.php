@@ -8,9 +8,6 @@
 
 namespace Lib;
 
-
-
-
 abstract class Controller
 {
     protected $twig;
@@ -34,12 +31,19 @@ abstract class Controller
         return $this->database;
     }
 
+    /**
+     * @param $view
+     * @param $data
+     */
     public function render($view, $data)
     {
         $template= $this->twig->load($view);
         echo $template->render($data);
     }
 
+    /**
+     * @param $page
+     */
     public function redirect($page)
     {
         header('Location: http://monblog.test'.$page);

@@ -68,14 +68,14 @@ class CommentManager extends Manager
      * @param $id
      * @return mixed
      */
-    public function filterComment($object, $newComment, $id)
+    public function formDataComment($object, $newComment, $id)
     {
         $newComment->setArticleId($id);
         $newComment->setSignale('0');
         $newComment->hydrate($object);
         $formData['newComment'] = $newComment;
         $formData['erreur'] = $newComment->valid();
-        if (count($formData['erreur'])==0){
+        if (count($formData['erreur'])==0) {
             $this->insert($formData['newComment']);
             Controller::redirect('/article/'.$id.'?page=1');
         }

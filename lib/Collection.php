@@ -30,8 +30,7 @@ class Collection implements \Countable, \Iterator
     }
 
     /**
-     * Inverser les valeurs du tableau
-     * return Collection;
+     * @return Collection
      */
     public function reverse()
     {
@@ -39,8 +38,7 @@ class Collection implements \Countable, \Iterator
     }
 
     /**
-     * Récupérer un tableau contenant les clés du table $this->data
-     * return Collection;
+     * @return Collection
      */
     public function keys()
     {
@@ -48,7 +46,6 @@ class Collection implements \Countable, \Iterator
     }
 
     /**
-     * Effectuer un traitement sur chaque entrée de mon table
      * @param $callback
      * @return $this
      */
@@ -62,8 +59,8 @@ class Collection implements \Countable, \Iterator
     }
 
     /**
-     * Retourner seulement les valeurs que l'on cherche via la fonction de callback
-     * return Collection;
+     * @param $callback
+     * @return Collection
      */
     public function filter($callback)
     {
@@ -71,21 +68,13 @@ class Collection implements \Countable, \Iterator
     }
 
     /**
-     * Retourner un tableau ou l'on appliquera la fonction de callback sur chaque élément
-     * return Collection;
+     * @param $callback
+     * @return Collection
      */
     public function map($callback)
     {
         return new Collection(array_map($callback, $this->data));
     }
-
-    /**
-     * Trier le tableau selon le callback
-     * Voir la documentation de la fonciton usort
-     *
-     * return Collection;
-     */
-    public function sort($callback) {}
 
     /**
      * @param $value
@@ -147,7 +136,7 @@ class Collection implements \Countable, \Iterator
     }
 
     /**
-     * Set position to the next one
+     *
      */
     public function next()
     {
@@ -171,13 +160,16 @@ class Collection implements \Countable, \Iterator
     }
 
     /**
-     * Set position to 0
+     *
      */
     public function rewind()
     {
         $this->position = 0;
     }
 
+    /**
+     * @return mixed
+     */
     public function first()
     {
         return $this->data[0];
