@@ -1,17 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 01/11/2017
- * Time: 14:40
- */
 
 namespace Lib;
 
+/**
+ * Class Database
+ * @package Lib
+ */
 class Database
 {
+    /**
+     * @var \PDO
+     */
     protected $pdo;
 
+    /**
+     * @var array
+     */
     private $instancesManager = [];
 
     /**

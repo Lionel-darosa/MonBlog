@@ -1,19 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 01/11/2017
- * Time: 14:39
- */
 
 namespace Controller;
 
 use Lib\Controller;
-use Lib\Database;
 use Model\Commentaire;
 use Manager\ArticleManager;
 use Manager\CommentManager;
 
+/**
+ * Class FrontController
+ * @package Controller
+ */
 class FrontController extends Controller
 {
     /**
@@ -55,30 +52,17 @@ class FrontController extends Controller
     public function post($id)
     {
         $article= $this->getDatabase()->getManager(ArticleManager::class)->find($id);
-        $database= new Database();
-        $newComment = new Commentaire($database);
+        $newComment = new Commentaire($this->database);
         $commentData=[
             'newComment'=>'',
             'erreur'=>''
         ];
         if ($_SERVER["REQUEST_METHOD"]=="POST") {
-            $args = array(
-                'pseudo' => FILTER_SANITIZE_SPECIAL_CHARS,
-                'commentaire' => FILTER_SANITIZE_SPECIAL_CHARS
-            );
-            $myInput = filter_var_array($_POST, $args);
+            $myInput = filter_var_array($_POST, $newComment->metadata['args']);
             $commentData = $this->getDatabase()->getManager(CommentManager::class)->formDataComment($myInput, $newComment, $id);
         }
         $nbrArticles=$this->getDatabase()->getManager(ArticleManager::class)->countPosts();
-        $ordre= $article->getOrdre();
-        $lastPost= $this->getDatabase()->getManager(ArticleManager::class)->findMinMax("MAX(ordre)");
-        $firstPost= $this->getDatabase()->getManager(ArticleManager::class)->findMinMax("MIN(ordre)");
-        $nextAndPrevious= $this->getDatabase()->getManager(ArticleManager::class)->nextPreviousPost($ordre, $firstPost, $lastPost);
-        $nbrPerPage=5;
-        $nbrComments=$this->getDatabase()->getManager(CommentManager::class)->countCommentsArticle($id);
-        $nbrPages= ceil($nbrComments/$nbrPerPage);
-        $firstEnter= ($_GET["page"]-1)*$nbrPerPage;
-        $CommentsOnPage= $this->getDatabase()->getManager(CommentManager::class)->findPerPageDesc($firstEnter, $nbrPerPage, $id);
+        $CommentsOnPage= $this->getDatabase()->getManager(CommentManager::class)->findPerPageDesc(($_GET["page"]-1)*5, 5, $id);
         $this->render(
             'article.html.twig', [
                 "article"=>$article,
@@ -86,9 +70,6 @@ class FrontController extends Controller
                 "newComment"=>$commentData['newComment'],
                 "nbrArticles"=>$nbrArticles,
                 "CommentOnPage"=>$CommentsOnPage,
-                "nbrPages"=>$nbrPages,
-                "nextAndPrevious"=>$nextAndPrevious,
-                "lastPost"=>$lastPost['0']
             ]
         );
     }

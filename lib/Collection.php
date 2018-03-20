@@ -8,6 +8,10 @@
 
 namespace Lib;
 
+/**
+ * Class Collection
+ * @package Lib
+ */
 class Collection implements \Countable, \Iterator
 {
     /**

@@ -1,19 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 09/02/2018
- * Time: 21:32
- */
 
 namespace Manager;
 
 use Model\Commentaire;
 use Lib\Manager;
-use Lib\Controller;
 
+/**
+ * Class CommentManager
+ * @package Manager
+ */
 class CommentManager extends Manager
 {
+    /**
+     * @var string
+     */
     protected $class = Commentaire::class;
 
     /**
@@ -77,7 +77,7 @@ class CommentManager extends Manager
         $formData['erreur'] = $newComment->valid();
         if (count($formData['erreur'])==0) {
             $this->insert($formData['newComment']);
-            Controller::redirect('/article/'.$id.'?page=1');
+            header('Location: http://'.$_SERVER['HTTP_HOST'].'/article/'.$id.'?page=1');
         }
         return $formData;
     }

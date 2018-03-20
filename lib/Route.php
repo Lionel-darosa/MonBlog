@@ -1,23 +1,36 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: thomas
- * Date: 16/10/17
- * Time: 19:04
- */
 
 namespace Lib;
 
+/**
+ * Class Route
+ * @package Lib
+ */
 class Route
 {
+    /**
+     * @var
+     */
     private $name;
 
+    /**
+     * @var
+     */
     private $path;
 
+    /**
+     * @var
+     */
     private $controller;
 
+    /**
+     * @var
+     */
     private $action;
 
+    /**
+     * @var
+     */
     private $session;
 
     /**

@@ -1,15 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 01/11/2017
- * Time: 14:42
- */
 
 namespace Lib;
 
+/**
+ * Class Entity
+ * @package Lib
+ */
 abstract class Entity
 {
+    /**
+     * @var Database
+     */
     protected $database;
 
     /**

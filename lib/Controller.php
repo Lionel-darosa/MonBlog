@@ -1,18 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 22/11/2017
- * Time: 18:58
- */
 
 namespace Lib;
 
+/**
+ * Class Controller
+ * @package Lib
+ */
 abstract class Controller
 {
+    /**
+     * @var \Twig_Environment
+     */
     protected $twig;
+
+    /**
+     * @var
+     */
     protected $database;
 
+    /**
+     * Controller constructor.
+     */
     public function __construct()
     {
         $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../src/View');
@@ -46,7 +54,7 @@ abstract class Controller
      */
     public function redirect($page)
     {
-        header('Location: http://monblog.test'.$page);
+        header('Location: http://'.$_SERVER['HTTP_HOST'].$page);
     }
 
 }

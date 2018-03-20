@@ -1,5 +1,4 @@
 Require all granted
-AllowOverride All
 Order Allow,Deny
 Allow from All
 Options -MultiViews

@@ -1,18 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 01/11/2017
- * Time: 14:40
- */
 
 namespace Model;
 
 use Lib\Entity;
+use Manager\ArticleManager;
 use Manager\CommentManager;
 
+/**
+ * Class Article
+ * @package Model
+ */
 class Article extends Entity
 {
+    /**
+     * @var array
+     */
     public $metadata = [
         "table" => "article",
         "primary_key" => "id",
@@ -39,6 +41,17 @@ class Article extends Entity
             "date_article" => [
                 "required" => false
             ]
+        ],
+        "args" => [
+                "titre" => FILTER_SANITIZE_SPECIAL_CHARS,
+                "article" => FILTER_UNSAFE_RAW,
+                "ordre" => [
+                    "filter" => FILTER_SANITIZE_NUMBER_INT,
+                    "options" => [
+                        'min_range' => 0
+                    ],
+                ],
+                "auteur" => FILTER_SANITIZE_SPECIAL_CHARS
         ]
     ];
 
@@ -67,6 +80,9 @@ class Article extends Entity
      */
     protected $auteur;
 
+    /**
+     * @var
+     */
     protected $commentaires;
 
     /**
@@ -191,5 +207,48 @@ class Article extends Entity
         return $this->$name;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getFirstPost()
+    {
+        $first = $this->database->getManager(ArticleManager::class)->findMinMax("MIN(ordre)");
+        return $first['0'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastPost()
+    {
+        $last = $this->database->getManager(ArticleManager::class)->findMinMax("MAX(ordre)");
+        return $last['0'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNextPost()
+    {
+        $next = $this->database->getManager(ArticleManager::class)->nextPost($this->getOrdre());
+        return $next['0']->getId();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPreviousPost()
+    {
+        $previous = $this->database->getManager(ArticleManager::class)->previousPost($this->getOrdre());
+        return $previous['0']->getId();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNbrComment()
+    {
+        return $this->database->getManager(CommentManager::class)->countCommentsArticle($this->getId());
+    }
 
 }

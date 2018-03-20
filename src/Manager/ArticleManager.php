@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 09/02/2018
- * Time: 21:32
- */
 
 namespace Manager;
 
@@ -93,26 +87,4 @@ class ArticleManager extends Manager
         return $statement->fetchAll(\PDO::FETCH_CLASS, $this->class, ["database" => &$this->database]);
     }
 
-    /**
-     * @param $ordre
-     * @param $firstPost
-     * @param $lastPost
-     * @return mixed
-     */
-    public function nextPreviousPost($ordre, $firstPost, $lastPost)
-    {
-        if ($ordre < $lastPost['0']) {
-            $suivant=$this->nextPost($ordre);
-            $nextPrevious["next"]= $suivant['0']->getId();
-        } else {
-            $nextPrevious["next"]='0';
-        }
-        if ($ordre>$firstPost['0']) {
-            $precedent=$this->previousPost($ordre);
-            $nextPrevious["previous"]= $precedent['0']->getId();
-        } else {
-            $nextPrevious["previous"]='0';
-        }
-        return $nextPrevious;
-    }
 }

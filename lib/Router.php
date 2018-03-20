@@ -1,14 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: thomas
- * Date: 16/10/17
- * Time: 19:03
- */
 
 namespace Lib;
 
 
+/**
+ * Class Router
+ * @package Lib
+ */
 class Router
 {
     private $routeCollection;
@@ -42,9 +40,8 @@ class Router
         );
         if ($routeCollection->count()) {
             return $routeCollection->first();
-        } else {
-            return null;
         }
+        return null;
     }
 
 

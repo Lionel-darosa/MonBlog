@@ -1,11 +1,5 @@
 {
-    "name": "root/array_collection",
-    "authors": [
-        {
-            "name": "TBoileau",
-            "email": "t-boileau@email.com"
-        }
-    ],
+
     "autoload": {
         "psr-4": {
             "Lib\\": "lib",
@@ -14,10 +8,6 @@
     },
     "require": {
         "twig/twig": "~2.0",
-        "twig/extensions": "~1.2",
-        "squizlabs/php_codesniffer": "*"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "twig/extensions": "~1.2"
     }
 }

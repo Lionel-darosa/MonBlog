@@ -20,15 +20,15 @@
 
 {% block section %}
     <!-- Pager -->
-    <div class="post-preview row col-lg-8 col-md-10 mx-auto">
-        <div class="col-sm-6">
-            {% if article.ordre>1 %}
-                <a class="btn btn-primary float-left" href="/article/{{nextAndPrevious.previous}}?page=1">&larr; Précédent </a>
+    <div class="post-preview row col-lg-8 col-xs-12 mx-auto">
+        <div class="col-sm">
+            {% if article.ordre > article.getFirstPost() %}
+                <a class="btn btn-primary float-left" href="/article/{{article.getPreviousPost()}}?page=1">&larr; Précédent</a>
             {% endif %}
         </div>
-        <div class="col-sm-6">
-            {% if article.ordre< lastPost   and  lastPost >1 %}
-                <a class="btn btn-primary float-right" href="/article/{{nextAndPrevious.next}}?page=1">Suivant &rarr;</a>
+        <div class="col-sm-6 col-xs-6">
+            {% if article.ordre < article.getLastPost()   and  article.getLastPost() > article.getFirstPost() %}
+                <a class="btn btn-primary float-right" href="/article/{{article.getNextPost()}}?page=1">Suivant &rarr;</a>
             {% endif %}
         </div>
     </div>
@@ -45,18 +45,18 @@
     </article>
 
     <!-- Pager -->
-    <div class="post-preview row col-lg-8 col-md-10 mx-auto">
+    <div class="post-preview row col-lg-8 col-xs-12 mx-auto">
         <div class="col-sm-5">
-            {% if article.ordre>1 %}
-                <a class="btn btn-primary float-left" href="/article/{{nextAndPrevious.previous}}?page=1">&larr; Précédent </a>
+            {% if article.ordre>article.getFirstPost() %}
+                <a class="btn btn-primary float-left" href="/article/{{article.getPreviousPost()}}?page=1">&larr; Précédent </a>
             {% endif %}
         </div>
         <div class="col-sm-2">
-            <p class="badge ml-sm-3 mt-sm-3">Article {{ article.ordre }}/{{ lastPost }}</p>
+            <p class="badge ml-sm-3 mt-sm-3">Article {{ article.ordre }}/{{ article.getLastPost() }}</p>
         </div>
         <div class="col-sm-5">
-            {% if article.ordre< lastPost  and  lastPost>1 %}
-                <a class="btn btn-primary float-right" href="/article/{{nextAndPrevious.next}}?page=1">Suivant &rarr;</a>
+            {% if article.ordre < article.getLastPost()  and  article.getLastPost() > article.getFirstPost() %}
+                <a class="btn btn-primary float-right" href="/article/{{article.getNextPost()}}?page=1">Suivant &rarr;</a>
             {% endif %}
         </div>
     </div>
@@ -97,12 +97,12 @@
                 {% endif %}
             </div>
             <div class="col-sm-2 ">
-                {% if nbrPages>1 %}
-                    <p class="badge ml-sm-3 mt-sm-3">Page {{ _get.page }}/{{ nbrPages }}</p>
+                {% if (article.getNbrComment()/5) | round(0,'ceil') >1 %}
+                    <p class="badge ml-sm-3 mt-sm-3">Page {{ _get.page }}/{{ (article.getNbrComment()/5) | round(0,'ceil') }}</p>
                 {% endif %}
             </div>
             <div class="col-sm-5 ">
-                {% if _get.page<nbrPages %}
+                {% if _get.page < (article.getNbrComment()/5) | round(0,'ceil') %}
                     <a class="btn btn-primary float-right" href="/article/{{ article.id }}?page={{ _get.page+1 }}#commentaires">Plus anciens &rarr;</a>
                 {% endif %}
             </div>

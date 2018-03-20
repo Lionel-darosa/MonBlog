@@ -1,17 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 01/11/2017
- * Time: 14:40
- */
 
 namespace Model;
 
 use Lib\Entity;
 
+/**
+ * Class Commentaire
+ * @package Model
+ */
 class Commentaire extends Entity
 {
+    /**
+     * @var array
+     */
     public $metadata = [
         "table" => "commentaire",
         "primary_key" => "id",
@@ -36,6 +37,10 @@ class Commentaire extends Entity
             "date_Comment" => [
                 "required" => false
             ]
+        ],
+        "args" => [
+            "pseudo" => FILTER_SANITIZE_SPECIAL_CHARS,
+            "commentaire" => FILTER_SANITIZE_SPECIAL_CHARS
         ]
     ];
 
@@ -64,8 +69,14 @@ class Commentaire extends Entity
      */
     protected $signale;
 
+    /**
+     * @var
+     */
     protected $date_Comment;
 
+    /**
+     * @var
+     */
     protected $article;
 
     /**

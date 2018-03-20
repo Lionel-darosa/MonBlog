@@ -1,17 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 31/01/2018
- * Time: 00:28
- */
 
 namespace Lib;
 
+/**
+ * Class Manager
+ * @package Lib
+ */
 class Manager
 {
+    /**
+     * @var Database
+     */
     protected $database;
 
+    /**
+     * @var string
+     */
     protected $class="";
 
     /**
