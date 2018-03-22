@@ -3,7 +3,10 @@ Openclassrooms project 3
 
 ## Mettre le projet en ligne
 
-Pour commencer, cloner le projet sur votre poste de travail
+Pour commencer, cloner le projet sur votre poste de travail : `git clone git@github.com:mimo1449/MonBlog.git`
+
+### Installer les dépendances
+Il faut ensuite installer toutes les dépendances dans le dossiers vendor, en executant la commande suivante : `composer install`
 
 ### Faire un import de la base de données
 Importez les tables du fichier blog.sql dans votre base de données
@@ -25,6 +28,5 @@ public function __construct()
     }
 ```
 
-### Importer le site sur le serveur
-copier tout les fichiers du projet, à l'exception de la base de données blog.sql ainsi que le fichier README.md, et les coller 
-à la racine du serveur à l'aide d'un logiciel de transfert de fichier qui utilise le protocole ftp (type Filezilla).
+### Lancement du serveur en local
+Il suffit d'utiliser le serveur interne de php : `php -S localhost:8080`
