@@ -32,4 +32,7 @@ $router->add(New Route('DeleteCommentPage',  '#^/admin/DeleteCommentPage/([0-9]+
 $router->add(New Route('LogOut',  '#^/admin/LogOut$#', 'Controller\BackController', 'logOut', '1'));
 
 $route = $router->match($requestUri);
+if ($route == null) {
+    $route = new Route('MissingPage', '#.#', 'Controller\FrontController', 'missingPage', '0');
+}
 $route->call($requestUri);

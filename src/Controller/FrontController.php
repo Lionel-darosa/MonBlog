@@ -128,4 +128,12 @@ class FrontController extends Controller
             }
         }
     }
+
+    /**
+     *
+     */
+    public function missingPage()
+    {
+        $this->render('missingPage.html.twig', array());
+    }
 }
